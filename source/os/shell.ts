@@ -73,6 +73,12 @@ module TSOS {
                                   "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
+            // status <string>
+            sc = new ShellCommand(this.shellStatus,
+                "status",
+                "<string> - Sets the status message.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -236,7 +242,7 @@ module TSOS {
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     case "date":
-                        let dateTime = new Date()
+                        let dateTime = new Date();
                         _StdOut.putText("In this universe the time is " + dateTime + " on Planet Earth.");
                         break;
                     case "whereami":
@@ -292,6 +298,15 @@ module TSOS {
                 _OsShell.promptStr = args[0];
             } else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
+            }
+        }
+
+        public shellStatus(args: string[]) {
+            if (args.length > 0) {
+                var statusDescription = args[0];
+                
+            } else {
+                _StdOut.putText("Usage: status <string>  Please provide a status description.");
             }
         }
 
