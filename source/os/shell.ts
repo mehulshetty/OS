@@ -235,6 +235,17 @@ module TSOS {
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
+                    case "date":
+                        let dateTime = new Date()
+                        _StdOut.putText("In this universe the time is " + dateTime + " on Planet Earth.");
+                        break;
+                    case "whereami":
+                        _StdOut.putText("I'm right where you left me");
+                        break;
+                    // FINISH THIS
+                    case "":
+                        _StdOut.putText("");
+                        break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
                 }

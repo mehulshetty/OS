@@ -41,7 +41,8 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
-                } else {
+                }
+                else {
                     // This is a "normal" character, so ...
                     // ... draw it on the screen...
                     this.putText(chr);
