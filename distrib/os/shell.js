@@ -45,6 +45,9 @@ var TSOS;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
+            // status <string>
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the status message.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             // Display the initial prompt.
@@ -231,7 +234,7 @@ var TSOS;
                         _StdOut.putText("Trace OFF");
                         break;
                     default:
-                        _StdOut.putText("Invalid arguement.  Usage: trace <on | off>.");
+                        _StdOut.putText("Invalid argument.  Usage: trace <on | off>.");
                 }
             }
             else {
@@ -253,6 +256,14 @@ var TSOS;
             }
             else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
+            }
+        }
+        shellStatus(args) {
+            if (args.length > 0) {
+                var statusDescription = args[0];
+            }
+            else {
+                _StdOut.putText("Usage: status <string>  Please provide a status description.");
             }
         }
     }

@@ -73,7 +73,15 @@ var TSOS;
             this.currentYPosition += _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
+            console.log(this.currentYPosition);
             // TODO: Handle scrolling. (iProject 1)
+            if (this.currentYPosition > 500) {
+                let canvasImage = new Image();
+                canvasImage.src = _Canvas.toDataURL();
+                this.clearScreen();
+                _DrawingContext.drawImage(canvasImage, 0, -200);
+                this.currentYPosition -= 200;
+            }
         }
     }
     TSOS.Console = Console;

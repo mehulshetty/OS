@@ -79,7 +79,7 @@ var TSOS;
                 }
                 _KernelInputQueue.enqueue(chr);
             }
-            else if (((keyCode >= 186) && (keyCode <= 192)) ||
+            else if (((keyCode >= 186) && (keyCode <= 192)) || // All Remaining Special Characters
                 ((keyCode >= 219) && (keyCode <= 222))) {
                 if (isShifted === true) {
                     switch (keyCode) {
