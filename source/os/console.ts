@@ -43,13 +43,16 @@ module TSOS {
                     this.buffer = "";
                 }
                 else if (chr === String.fromCharCode(8)) {
-                    let delChar = this.buffer.slice(-2,-1);
+                    let delChar = this.buffer.slice(-1);
                     this.buffer = this.buffer.slice(0, -1);
 
                     this.removeText(delChar);
                 }
                 else if (chr === String.fromCharCode(9)) {
                     this.buffer = _OsShell.handleTab(this.buffer);
+                }
+                else if ((chr === "UP") || (chr === "DOWN")) {
+                    this.buffer = _OsShell.handleUpAndDown(chr, this.buffer);
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -82,17 +85,15 @@ module TSOS {
         public removeText(delChar): void {
 
             let offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, delChar);
-            console.log(offset);
+
             this.currentXPosition = this.currentXPosition - offset;
 
-            //_DrawingContext.fillStyle = "#DFDBC3";
-            _DrawingContext.beginPath();
             _DrawingContext.fillStyle = "#DFDBC3";
-            _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition + 5, offset, - (this.currentFontSize + 5));
-            // Draw the text at the current X and Y coordinates.
-            //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
 
-            this.currentXPosition = this.currentXPosition - offset;
+            let rectHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
+            
+            _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition + (2*_FontHeightMargin),
+                offset, -rectHeight);
         }
 
         public advanceLine(): void {

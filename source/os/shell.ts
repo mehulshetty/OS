@@ -15,6 +15,8 @@ module TSOS {
         public promptStr = ">";
         public commandList = [];
         public commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status"];
+        public commandHistory = new Array();
+        public commandOrder = 0;
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
 
@@ -92,6 +94,9 @@ module TSOS {
         }
 
         public handleInput(buffer) {
+            this.commandHistory.push(buffer);
+            this.commandOrder = this.commandHistory.length - 1;
+
             _Kernel.krnTrace("Shell Command~" + buffer);
             //
             // Parse the input...
@@ -169,6 +174,30 @@ module TSOS {
                 return buffer;
             }
 
+        }
+
+        public handleUpAndDown(keyStroke, buffer) {
+
+            if(keyStroke === "UP") {
+                let prevCommand = this.commandHistory[this.commandOrder];
+
+                if ((this.commandOrder - 1) !== 0) {
+                    this.commandOrder -= 1;
+                    _StdOut.putText(prevCommand);
+                }
+
+                return prevCommand;
+            }
+            else {
+                let nextCommand = this.commandHistory[this.commandOrder];
+
+                if ((this.commandOrder + 1) !== this.commandHistory.length) {
+                    this.commandOrder += 1;
+                    _StdOut.putText(nextCommand);
+                }
+
+                return nextCommand;
+            }
         }
 
         // Note: args is an optional parameter, ergo the ? which allows TypeScript to understand that.

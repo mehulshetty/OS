@@ -15,6 +15,8 @@ var TSOS;
             this.promptStr = ">";
             this.commandList = [];
             this.commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status"];
+            this.commandHistory = new Array();
+            this.commandOrder = 0;
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
         }
@@ -58,6 +60,8 @@ var TSOS;
             _StdOut.putText(this.promptStr);
         }
         handleInput(buffer) {
+            this.commandHistory.push(buffer);
+            this.commandOrder = this.commandHistory.length - 1;
             _Kernel.krnTrace("Shell Command~" + buffer);
             //
             // Parse the input...
@@ -127,6 +131,24 @@ var TSOS;
                 this.putPrompt();
                 _StdOut.putText(buffer);
                 return buffer;
+            }
+        }
+        handleUpAndDown(keyStroke, buffer) {
+            if (keyStroke === "UP") {
+                let prevCommand = this.commandHistory[this.commandOrder];
+                if ((this.commandOrder - 1) !== 0) {
+                    this.commandOrder -= 1;
+                    _StdOut.putText(prevCommand);
+                }
+                return prevCommand;
+            }
+            else {
+                let nextCommand = this.commandHistory[this.commandOrder];
+                if ((this.commandOrder + 1) !== this.commandHistory.length) {
+                    this.commandOrder += 1;
+                    _StdOut.putText(nextCommand);
+                }
+                return nextCommand;
             }
         }
         // Note: args is an optional parameter, ergo the ? which allows TypeScript to understand that.
