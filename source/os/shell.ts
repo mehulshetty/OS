@@ -130,6 +130,18 @@ module TSOS {
             }
         }
 
+        public handleTab(buffer) {
+            let possibleCommands = new Array();
+
+            for (let command of this.commandList) {
+                if(command.startsWith(buffer)) {
+                    possibleCommands.push(command);
+                }
+            }
+
+            _StdOut.advanceLine();
+        }
+
         // Note: args is an optional parameter, ergo the ? which allows TypeScript to understand that.
         public execute(fn, args?) {
             // We just got a command, so advance the line...

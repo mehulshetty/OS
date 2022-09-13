@@ -33,7 +33,7 @@ module TSOS {
         public handleInput(): void {
             while (_KernelInputQueue.getSize() > 0) {
                 // Get the next character from the kernel input queue.
-                var chr = _KernelInputQueue.dequeue();
+                let chr = _KernelInputQueue.dequeue();
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
                 if (chr === String.fromCharCode(13)) { // the Enter key
                     // The enter key marks the end of a console command, so ...
@@ -41,6 +41,15 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
+                }
+                else if (chr === String.fromCharCode(8)) {
+                    let delChar = this.buffer.slice(-2,-1);
+                    this.buffer = this.buffer.slice(0, -1);
+
+                    this.removeText(delChar);
+                }
+                else if (chr === String.fromCharCode(9)) {
+                    _OsShell.handleTab(this.buffer);
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -65,10 +74,26 @@ module TSOS {
                 // Draw the text at the current X and Y coordinates.
                 _DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
                 // Move the current X position.
-                var offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
+                let offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, text);
                 this.currentXPosition = this.currentXPosition + offset;
             }
-         }
+        }
+
+        public removeText(delChar): void {
+
+            let offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, delChar);
+            console.log(offset);
+            this.currentXPosition = this.currentXPosition - offset;
+
+            //_DrawingContext.fillStyle = "#DFDBC3";
+            _DrawingContext.beginPath();
+            _DrawingContext.fillStyle = "#DFDBC3";
+            _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition + 5, offset, - (this.currentFontSize + 5));
+            // Draw the text at the current X and Y coordinates.
+            //_DrawingContext.drawText(this.currentFont, this.currentFontSize, this.currentXPosition, this.currentYPosition, text);
+
+            this.currentXPosition = this.currentXPosition - offset;
+        }
 
         public advanceLine(): void {
             this.currentXPosition = 0;
@@ -87,7 +112,7 @@ module TSOS {
             if (this.currentYPosition > 500) {
                 let canvasImage = new Image();
                 canvasImage.src = _Canvas.toDataURL();
-                
+
                 _DrawingContext.drawImage(canvasImage, 0, -200);
                 this.currentYPosition -= 200;
             }
