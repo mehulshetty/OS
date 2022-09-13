@@ -49,7 +49,7 @@ module TSOS {
                     this.removeText(delChar);
                 }
                 else if (chr === String.fromCharCode(9)) {
-                    _OsShell.handleTab(this.buffer);
+                    this.buffer = _OsShell.handleTab(this.buffer);
                 }
                 else {
                     // This is a "normal" character, so ...

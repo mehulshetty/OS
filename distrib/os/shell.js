@@ -14,6 +14,7 @@ var TSOS;
             // Properties
             this.promptStr = ">";
             this.commandList = [];
+            this.commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status"];
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
         }
@@ -101,12 +102,32 @@ var TSOS;
         }
         handleTab(buffer) {
             let possibleCommands = new Array();
-            for (let command of this.commandList) {
+            for (let command of this.commandStringList) {
                 if (command.startsWith(buffer)) {
                     possibleCommands.push(command);
                 }
             }
-            _StdOut.advanceLine();
+            if (possibleCommands.length == 1) {
+                _StdOut.putText(possibleCommands[0].slice(buffer.length));
+                return possibleCommands[0];
+            }
+            else {
+                _StdOut.advanceLine();
+                let tabString = "No Valid Commands";
+                if (possibleCommands.length > 1) {
+                    tabString = possibleCommands.join(" | ");
+                }
+                _StdOut.putText(tabString);
+                _StdOut.advanceLine();
+                // Check to see if we need to advance the line again
+                if (_StdOut.currentXPosition > 0) {
+                    _StdOut.advanceLine();
+                }
+                // ... and finally write the prompt again.
+                this.putPrompt();
+                _StdOut.putText(buffer);
+                return buffer;
+            }
         }
         // Note: args is an optional parameter, ergo the ? which allows TypeScript to understand that.
         execute(fn, args) {
