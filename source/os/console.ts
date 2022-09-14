@@ -26,7 +26,7 @@ module TSOS {
         }
 
         public resetXY(): void {
-            this.currentXPosition = 0;
+            this.currentXPosition = 5;
             this.currentYPosition = this.currentFontSize;
         }
 

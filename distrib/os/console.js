@@ -22,7 +22,7 @@ var TSOS;
             _DrawingContext.clearRect(0, 0, _Canvas.width, _Canvas.height);
         }
         resetXY() {
-            this.currentXPosition = 0;
+            this.currentXPosition = 5;
             this.currentYPosition = this.currentFontSize;
         }
         handleInput() {

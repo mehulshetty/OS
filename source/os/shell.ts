@@ -81,6 +81,12 @@ module TSOS {
                 "<string> - Sets the status message.");
             this.commandList[this.commandList.length] = sc;
 
+            // load
+            sc = new ShellCommand(this.shellLoad,
+                "load",
+                "Loads the user input and checks if it is valid HEX.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -382,6 +388,33 @@ module TSOS {
                 
             } else {
                 _StdOut.putText("Usage: status <string>  Please provide a status description.");
+            }
+        }
+
+        public shellLoad() {
+            let loadData = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
+            console.log(loadData);
+            if (loadData !== "") {
+                let validData = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", " "];
+                let isValid = true;
+
+                for (let loadLetter of loadData) {
+                    loadLetter = loadLetter.toUpperCase();
+                    console.log(loadLetter);
+                    if (!validData.includes(loadLetter)) {
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                if(isValid) {
+                    _StdOut.putText("The input user code is VALID.");
+                }
+                else {
+                    _StdOut.putText("The input user code is INVALID.");
+                }
+            } else {
+                _StdOut.putText("Usage: prompt <load>  Please load some user code.");
             }
         }
 
