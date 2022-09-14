@@ -75,7 +75,7 @@ var TSOS;
                 decided to write one function and use the term "text" to connote string or char.
             */
             for (let text of fullText) {
-                if (this.currentXPosition > 493) {
+                if (this.currentXPosition > 893) {
                     this.advanceLine();
                 }
                 if (text !== "") {
@@ -107,11 +107,11 @@ var TSOS;
             this.currentYPosition += incrementYPosition;
             console.log(this.currentYPosition);
             // TODO: Handle scrolling. (iProject 1)
-            if (this.currentYPosition >= 500) {
-                let oldCanvas = _DrawingContext.getImageData(0, this.currentYPosition, 500, -(500 - incrementYPosition));
-                this.currentYPosition = 500 - incrementYPosition;
+            if (this.currentYPosition >= 650) {
+                let oldCanvas = _DrawingContext.getImageData(0, this.currentYPosition, 900, -(650 - incrementYPosition));
+                this.currentYPosition = 650 - incrementYPosition;
                 _DrawingContext.fillStyle = "#DFDBC3";
-                _DrawingContext.fillRect(0, 500, 500, -(incrementYPosition + 3));
+                _DrawingContext.fillRect(0, 650, 900, -(incrementYPosition + 3));
                 _DrawingContext.putImageData(oldCanvas, 0, 0);
             }
         }

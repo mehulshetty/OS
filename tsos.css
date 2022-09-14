@@ -13,7 +13,10 @@ h1 {
   font-size: 24pt;
   font-weight: normal;
   font-style: normal;
-  border-bottom: 1px solid black;
+  display: inline-block;
+  padding-left: 300px;
+  padding-right: 50px;
+  text-align: center;
 }
 
 h2 {
@@ -45,4 +48,25 @@ h3 {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 8pt;
   text-align: center;
+}
+
+.normal_button {
+  padding: 10px 5px;
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: #04AA6D;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.normal_button:hover {background-color: #3e8e41}
+
+.normal_button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
 }

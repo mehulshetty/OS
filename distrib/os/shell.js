@@ -14,7 +14,7 @@ var TSOS;
             // Properties
             this.promptStr = ">";
             this.commandList = [];
-            this.commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status"];
+            this.commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status", "load", "bsod"];
             this.commandHistory = new Array();
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
@@ -52,6 +52,9 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             // load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "Loads the user input and checks if it is valid HEX.");
+            this.commandList[this.commandList.length] = sc;
+            // bsod
+            sc = new TSOS.ShellCommand(this.shellBsod, "bsod", "BLUE SCREEN OF DEATH");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -350,6 +353,9 @@ var TSOS;
             else {
                 _StdOut.putText("Usage: prompt <load>  Please load some user code.");
             }
+        }
+        // TODO: BSOD
+        shellBsod() {
         }
     }
     TSOS.Shell = Shell;

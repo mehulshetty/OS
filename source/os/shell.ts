@@ -14,7 +14,7 @@ module TSOS {
         // Properties
         public promptStr = ">";
         public commandList = [];
-        public commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status"];
+        public commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status", "load", "bsod"];
         public commandHistory = new Array();
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
@@ -85,6 +85,12 @@ module TSOS {
             sc = new ShellCommand(this.shellLoad,
                 "load",
                 "Loads the user input and checks if it is valid HEX.");
+            this.commandList[this.commandList.length] = sc;
+
+            // bsod
+            sc = new ShellCommand(this.shellBsod,
+                "bsod",
+                "BLUE SCREEN OF DEATH");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
@@ -416,6 +422,11 @@ module TSOS {
             } else {
                 _StdOut.putText("Usage: prompt <load>  Please load some user code.");
             }
+        }
+
+        // TODO: BSOD
+        public shellBsod() {
+
         }
 
     }

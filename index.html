@@ -65,38 +65,42 @@
              value="Reset"
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
-   </div>
 
-   <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left;">
-      <canvas id="display"
-              width="500px"
-              height="500px"
-              tabindex="3">
-      </canvas>
+      <h1>zerOS</h1>
    </div>
+   <div>
+      <div id="divConsole" style="margin:4px; width: 900px; height:650px; float:left;">
+         <canvas id="display"
+                 width="900px"
+                 height="650px"
+                 tabindex="3">
+         </canvas>
+      </div>
+      <div style="padding-left: 400px">
+         <div id="divLog" style="margin-left:520px;">
+            <label>
+               Host Log
+               <br>
+               <textarea name="taHostLog"
+                         id  ="taHostLog"
+                         rows="33"
+                         cols="68"
+               ></textarea>
+            </label>
+         </div>
 
-   <div id="divLog" style="margin-left:520px;">
-      <label>
-         Host Log
-         <br>
-         <textarea name="taHostLog"
-                   id  ="taHostLog"
-                   rows="26"
-                   cols="48"
-         ></textarea>
-      </label>
-   </div>
-
-   <div id="divUserProgramInput" style="margin-left:520px;">
-      <label>
-         User Program Input
-         <br>
-         <textarea name="taProgramInput"
-                   id  ="taProgramInput"
-                   rows="8"
-                   cols="48"
-         ></textarea>
-      </label>
+         <div id="divUserProgramInput" style="margin-left:520px;">
+            <label>
+               User Program Input
+               <br>
+               <textarea name="taProgramInput"
+                         id  ="taProgramInput"
+                         rows="13"
+                         cols="68"
+               ></textarea>
+            </label>
+         </div>
+      </div>
    </div>
 </div>
 
