@@ -16,7 +16,6 @@ var TSOS;
             this.commandList = [];
             this.commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status"];
             this.commandHistory = new Array();
-            this.commandOrder = 0;
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
         }
@@ -61,7 +60,9 @@ var TSOS;
         }
         handleInput(buffer) {
             this.commandHistory.push(buffer);
-            this.commandOrder = this.commandHistory.length - 1;
+            console.log("Command History; ", this.commandHistory);
+            commandOrder = this.commandHistory.length - 1;
+            console.log("Command Order; ", commandOrder);
             _Kernel.krnTrace("Shell Command~" + buffer);
             //
             // Parse the input...
@@ -133,22 +134,26 @@ var TSOS;
                 return buffer;
             }
         }
-        handleUpAndDown(keyStroke, buffer) {
-            if (keyStroke === "UP") {
-                let prevCommand = this.commandHistory[this.commandOrder];
-                if ((this.commandOrder - 1) !== 0) {
-                    this.commandOrder -= 1;
-                    _StdOut.putText(prevCommand);
+        handleUpAndDown(keyStroke) {
+            if (this.commandHistory.length !== 0) {
+                if (keyStroke === "UP") {
+                    let prevCommand = this.commandHistory[commandOrder];
+                    if ((commandOrder - 1) !== 0) {
+                        commandOrder -= 1;
+                        prevCommand = this.commandHistory[commandOrder];
+                        _StdOut.putText(prevCommand);
+                    }
+                    return prevCommand;
                 }
-                return prevCommand;
-            }
-            else {
-                let nextCommand = this.commandHistory[this.commandOrder];
-                if ((this.commandOrder + 1) !== this.commandHistory.length) {
-                    this.commandOrder += 1;
-                    _StdOut.putText(nextCommand);
+                else {
+                    let nextCommand = this.commandHistory[commandOrder];
+                    if ((commandOrder + 1) !== this.commandHistory.length) {
+                        commandOrder += 1;
+                        nextCommand = this.commandHistory[commandOrder];
+                        _StdOut.putText(nextCommand);
+                    }
+                    return nextCommand;
                 }
-                return nextCommand;
             }
         }
         // Note: args is an optional parameter, ergo the ? which allows TypeScript to understand that.

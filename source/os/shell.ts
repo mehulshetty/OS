@@ -16,7 +16,6 @@ module TSOS {
         public commandList = [];
         public commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status"];
         public commandHistory = new Array();
-        public commandOrder = 0;
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
 
@@ -95,7 +94,9 @@ module TSOS {
 
         public handleInput(buffer) {
             this.commandHistory.push(buffer);
-            this.commandOrder = this.commandHistory.length - 1;
+            console.log("Command History; ", this.commandHistory);
+            commandOrder = this.commandHistory.length - 1;
+            console.log("Command Order; ", commandOrder);
 
             _Kernel.krnTrace("Shell Command~" + buffer);
             //
@@ -176,27 +177,31 @@ module TSOS {
 
         }
 
-        public handleUpAndDown(keyStroke, buffer) {
+        public handleUpAndDown(keyStroke) {
 
-            if(keyStroke === "UP") {
-                let prevCommand = this.commandHistory[this.commandOrder];
+            if(this.commandHistory.length !== 0) {
+                if(keyStroke === "UP") {
+                    let prevCommand = this.commandHistory[commandOrder];
 
-                if ((this.commandOrder - 1) !== 0) {
-                    this.commandOrder -= 1;
-                    _StdOut.putText(prevCommand);
+                    if ((commandOrder - 1) !== 0) {
+                        commandOrder -= 1;
+                        prevCommand = this.commandHistory[commandOrder];
+                        _StdOut.putText(prevCommand);
+                    }
+
+                    return prevCommand;
                 }
+                else {
+                    let nextCommand = this.commandHistory[commandOrder];
 
-                return prevCommand;
-            }
-            else {
-                let nextCommand = this.commandHistory[this.commandOrder];
+                    if ((commandOrder + 1) !== this.commandHistory.length) {
+                        commandOrder += 1;
+                        nextCommand = this.commandHistory[commandOrder];
+                        _StdOut.putText(nextCommand);
+                    }
 
-                if ((this.commandOrder + 1) !== this.commandHistory.length) {
-                    this.commandOrder += 1;
-                    _StdOut.putText(nextCommand);
+                    return nextCommand;
                 }
-
-                return nextCommand;
             }
         }
 

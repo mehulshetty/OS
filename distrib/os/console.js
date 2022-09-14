@@ -46,7 +46,15 @@ var TSOS;
                     this.buffer = _OsShell.handleTab(this.buffer);
                 }
                 else if ((chr === "UP") || (chr === "DOWN")) {
-                    this.buffer = _OsShell.handleUpAndDown(chr, this.buffer);
+                    for (let bufferIndex = this.buffer.length - 1; bufferIndex >= 0; bufferIndex--) {
+                        let bufferLetter = this.buffer[bufferIndex];
+                        this.removeText(bufferLetter);
+                    }
+                    this.buffer = _OsShell.handleUpAndDown(chr);
+                    for (let bufferIndex = 0; bufferIndex >= this.buffer.length - 1; bufferIndex++) {
+                        let bufferLetter = this.buffer[bufferIndex];
+                        this.putText(bufferLetter);
+                    }
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -78,9 +86,7 @@ var TSOS;
             let offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, delChar);
             this.currentXPosition = this.currentXPosition - offset;
             _DrawingContext.fillStyle = "#DFDBC3";
-            let rectHeight = _DefaultFontSize +
-                _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
-                _FontHeightMargin;
+            let rectHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
             _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition + (2 * _FontHeightMargin), offset, -rectHeight);
         }
         advanceLine() {
@@ -90,16 +96,18 @@ var TSOS;
              * Font descent measures from the baseline to the lowest point in the font.
              * Font height margin is extra spacing between the lines.
              */
-            this.currentYPosition += _DefaultFontSize +
+            let incrementYPosition = _DefaultFontSize +
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
+            this.currentYPosition += incrementYPosition;
             console.log(this.currentYPosition);
             // TODO: Handle scrolling. (iProject 1)
-            if (this.currentYPosition > 500) {
-                let canvasImage = new Image();
-                canvasImage.src = _Canvas.toDataURL();
-                _DrawingContext.drawImage(canvasImage, 0, -200);
-                this.currentYPosition -= 200;
+            if (this.currentYPosition >= 500) {
+                let oldCanvas = _DrawingContext.getImageData(0, this.currentYPosition, 500, -(500 - incrementYPosition));
+                this.currentYPosition = 500 - incrementYPosition;
+                _DrawingContext.fillStyle = "#DFDBC3";
+                _DrawingContext.fillRect(0, 500, 500, -(incrementYPosition + 3));
+                _DrawingContext.putImageData(oldCanvas, 0, 0);
             }
         }
     }
