@@ -1,7 +1,7 @@
 /* TSOS.css */
 
 body {
-  background: #909193 url(distrib/images/linen.png) repeat;
+  background: #000000 repeat;
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
@@ -9,14 +9,15 @@ body {
 }
 
 h1 {
-  color: black;
-  font-size: 24pt;
-  font-weight: normal;
+  color: white;
+  font-size: 30pt;
+  font-weight: bold;
   font-style: normal;
   display: inline-block;
   padding-left: 300px;
   padding-right: 50px;
   text-align: center;
+  font-family: Copperplate;
 }
 
 h2 {
@@ -85,4 +86,15 @@ h3 {
   border-radius: 15px;
   height: 20px;
   align-content: center;
+}
+
+label {
+  color: white;
+  font-family: Cooperplate;
+}
+
+textarea {
+  border-radius: 5px;
+  font-family: Cooperplate;
+  font-size: 12px;
 }
