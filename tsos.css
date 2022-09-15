@@ -70,3 +70,19 @@ h3 {
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
+
+#currentDateAndTime {
+  text-align: center;
+  width: 300px;
+  margin-left: 250px;
+  border-radius: 15px;
+  height: 20px;
+}
+
+#status {
+  text-align: center;
+  width: 100%;
+  border-radius: 15px;
+  height: 20px;
+  align-content: center;
+}

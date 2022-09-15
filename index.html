@@ -62,11 +62,16 @@
              name="brnReset"
              class="normal_button"
              disabled="disabled"
-             value="Reset"
+             value="Restart"
              tabindex="2"
              onclick="TSOS.Control.hostBtnReset_click(this);">
 
       <h1>zerOS</h1>
+
+      <input type="text"
+             id = "currentDateAndTime"
+             readonly>
+
    </div>
    <div>
       <div id="divConsole" style="margin:4px; width: 900px; height:650px; float:left;">
@@ -104,12 +109,18 @@
    </div>
 </div>
 
+<div>
+   <input type="text"
+          id = "status"
+          value="STATUS:"
+          readonly>
+</div>
+
 <p class="footerText" style="clear:both;">
    <br>
-   Copyright &copy; 2008 - 2019 No Rights Reserved.
+   Copyright &copy; 2022 - 2022 All Rights Reserved. This is the intellectual property of May-Whool.
    <br>
-   Reproduction is inhibited without the express written consent of
-   Ted Codd, Stevie Ray Vaughan, and Ian Fleming.
+   Reproduction is inhibited without the express written consent of Our Lord and Savior Tim Cook.
 </p>
 
 </body>

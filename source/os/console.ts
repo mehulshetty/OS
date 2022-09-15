@@ -59,7 +59,7 @@ module TSOS {
 
                     this.buffer = _OsShell.handleUpAndDown(chr);
 
-                    for(let bufferIndex = 0; bufferIndex >= this.buffer.length - 1; bufferIndex++) {
+                    for(let bufferIndex = 0; bufferIndex <= this.buffer.length - 1; bufferIndex++) {
                         let bufferLetter = this.buffer[bufferIndex];
                         this.putText(bufferLetter);
                     }

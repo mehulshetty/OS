@@ -16,6 +16,7 @@ var TSOS;
             this.commandList = [];
             this.commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status", "load", "bsod"];
             this.commandHistory = new Array();
+            this.commandOrder = -1;
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
             this.apologies = "[sorry]";
         }
@@ -54,7 +55,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "Loads the user input and checks if it is valid HEX.");
             this.commandList[this.commandList.length] = sc;
             // bsod
-            sc = new TSOS.ShellCommand(this.shellBsod, "bsod", "BLUE SCREEN OF DEATH");
+            sc = new TSOS.ShellCommand(this.shellBsod, "bsod", "Displays the blue screen of death.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -67,8 +68,8 @@ var TSOS;
         handleInput(buffer) {
             this.commandHistory.push(buffer);
             console.log("Command History; ", this.commandHistory);
-            commandOrder = this.commandHistory.length - 1;
-            console.log("Command Order; ", commandOrder);
+            this.commandOrder = this.commandHistory.length - 1;
+            console.log("Command Order; ", this.commandOrder);
             _Kernel.krnTrace("Shell Command~" + buffer);
             //
             // Parse the input...
@@ -143,20 +144,16 @@ var TSOS;
         handleUpAndDown(keyStroke) {
             if (this.commandHistory.length !== 0) {
                 if (keyStroke === "UP") {
-                    let prevCommand = this.commandHistory[commandOrder];
-                    if ((commandOrder - 1) !== 0) {
-                        commandOrder -= 1;
-                        prevCommand = this.commandHistory[commandOrder];
-                        _StdOut.putText(prevCommand);
+                    let prevCommand = this.commandHistory[this.commandOrder];
+                    if ((this.commandOrder - 1) >= 0) {
+                        this.commandOrder -= 1;
                     }
                     return prevCommand;
                 }
                 else {
-                    let nextCommand = this.commandHistory[commandOrder];
-                    if ((commandOrder + 1) !== this.commandHistory.length) {
-                        commandOrder += 1;
-                        nextCommand = this.commandHistory[commandOrder];
-                        _StdOut.putText(nextCommand);
+                    let nextCommand = this.commandHistory[this.commandOrder];
+                    if ((this.commandOrder + 1) < this.commandHistory.length) {
+                        this.commandOrder += 1;
                     }
                     return nextCommand;
                 }
@@ -323,7 +320,9 @@ var TSOS;
         }
         shellStatus(args) {
             if (args.length > 0) {
-                var statusDescription = args[0];
+                let statusDescription = args[0];
+                let newStatus = document.getElementById("status");
+                newStatus.value = "STATUS: " + statusDescription;
             }
             else {
                 _StdOut.putText("Usage: status <string>  Please provide a status description.");
@@ -356,6 +355,11 @@ var TSOS;
         }
         // TODO: BSOD
         shellBsod() {
+            _DrawingContext.fillStyle = "#0000FF";
+            _DrawingContext.fillRect(0, 0, 900, 650);
+            _StdOut.currentXPosition = 250;
+            _StdOut.currentYPosition = 300;
+            _StdOut.putText("UNKNOWN_ERROR.EXE was run. Please restart the system.");
         }
     }
     TSOS.Shell = Shell;

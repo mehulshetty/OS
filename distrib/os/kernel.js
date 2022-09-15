@@ -136,7 +136,7 @@ var TSOS;
             if (_Trace) {
                 if (msg === "Idle") {
                     // We can't log every idle clock pulse because it would quickly lag the browser quickly.
-                    if (_OSclock % 10 == 0) {
+                    if (_OSClock % 10 == 0) {
                         // Check the CPU_CLOCK_INTERVAL in globals.ts for an
                         // idea of the tick rate and adjust this line accordingly.
                         TSOS.Control.hostLog(msg, "OS");
@@ -150,6 +150,7 @@ var TSOS;
         krnTrapError(msg) {
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
+            _OsShell.shellBsod();
             this.krnShutdown();
         }
     }

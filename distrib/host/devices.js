@@ -25,7 +25,7 @@ var TSOS;
         //
         static hostClockPulse() {
             // Increment the hardware (host) clock.
-            _OSclock++;
+            _OSClock++;
             // Call the kernel clock pulse event handler.
             _Kernel.krnOnCPUClockPulse();
         }

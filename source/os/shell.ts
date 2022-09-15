@@ -16,6 +16,7 @@ module TSOS {
         public commandList = [];
         public commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status", "load", "bsod"];
         public commandHistory = new Array();
+        public commandOrder = -1;
         public curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
         public apologies = "[sorry]";
 
@@ -90,7 +91,7 @@ module TSOS {
             // bsod
             sc = new ShellCommand(this.shellBsod,
                 "bsod",
-                "BLUE SCREEN OF DEATH");
+                "Displays the blue screen of death.");
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
@@ -107,8 +108,8 @@ module TSOS {
         public handleInput(buffer) {
             this.commandHistory.push(buffer);
             console.log("Command History; ", this.commandHistory);
-            commandOrder = this.commandHistory.length - 1;
-            console.log("Command Order; ", commandOrder);
+            this.commandOrder = this.commandHistory.length - 1;
+            console.log("Command Order; ", this.commandOrder);
 
             _Kernel.krnTrace("Shell Command~" + buffer);
             //
@@ -193,23 +194,19 @@ module TSOS {
 
             if(this.commandHistory.length !== 0) {
                 if(keyStroke === "UP") {
-                    let prevCommand = this.commandHistory[commandOrder];
+                    let prevCommand = this.commandHistory[this.commandOrder];
 
-                    if ((commandOrder - 1) !== 0) {
-                        commandOrder -= 1;
-                        prevCommand = this.commandHistory[commandOrder];
-                        _StdOut.putText(prevCommand);
+                    if ((this.commandOrder - 1) >= 0) {
+                        this.commandOrder -= 1;
                     }
 
                     return prevCommand;
                 }
                 else {
-                    let nextCommand = this.commandHistory[commandOrder];
+                    let nextCommand = this.commandHistory[this.commandOrder];
 
-                    if ((commandOrder + 1) !== this.commandHistory.length) {
-                        commandOrder += 1;
-                        nextCommand = this.commandHistory[commandOrder];
-                        _StdOut.putText(nextCommand);
+                    if ((this.commandOrder + 1) < this.commandHistory.length) {
+                        this.commandOrder += 1;
                     }
 
                     return nextCommand;
@@ -390,7 +387,10 @@ module TSOS {
 
         public shellStatus(args: string[]) {
             if (args.length > 0) {
-                var statusDescription = args[0];
+                let statusDescription = args[0];
+
+                let newStatus = <HTMLInputElement>document.getElementById("status");
+                newStatus.value = "STATUS: " + statusDescription;
                 
             } else {
                 _StdOut.putText("Usage: status <string>  Please provide a status description.");
@@ -426,7 +426,11 @@ module TSOS {
 
         // TODO: BSOD
         public shellBsod() {
-
+            _DrawingContext.fillStyle = "#0000FF";
+            _DrawingContext.fillRect(0,0,900,650);
+            _StdOut.currentXPosition = 250;
+            _StdOut.currentYPosition = 300;
+            _StdOut.putText("UNKNOWN_ERROR.EXE was run. Please restart the system.");
         }
 
     }

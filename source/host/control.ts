@@ -44,17 +44,19 @@ module TSOS {
 
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
-            if (typeof Glados === "function") {
+            // if (typeof Glados === "function") {
                 // function Glados() is here, so instantiate Her into
                 // the global (and properly capitalized) _GLaDOS variable.
-                _GLaDOS = new Glados();
-                _GLaDOS.init();
-            }
+            //    _GLaDOS = new Glados();
+            //    _GLaDOS.init();
+            //}
+
+            setInterval(() => this.updateCurrentDateAndTime(), 1000);
         }
 
         public static hostLog(msg: string, source: string = "?"): void {
             // Note the OS CLOCK.
-            var clock: number = _OSclock;
+            var clock: number = _OSClock;
 
             // Note the REAL clock in milliseconds since January 1, 1970.
             var now: number = new Date().getTime();
@@ -111,6 +113,13 @@ module TSOS {
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        }
+
+        public static updateCurrentDateAndTime(): void {
+
+            let dateAndTimeObject = <HTMLInputElement>document.getElementById("currentDateAndTime");
+            let updatedDateAndTime = new Date();
+            dateAndTimeObject.value = updatedDateAndTime.toUTCString();
         }
     }
 }
