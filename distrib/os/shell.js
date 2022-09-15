@@ -5,6 +5,9 @@
 
     Note: While fun and learning are the primary goals of all enrichment center activities,
           serious injuries may occur when trying to write your own Operating System.
+
+   SOURCE: https://stackoverflow.com/questions/3057162/moving-an-image-across-a-html-canvas
+   SOURCE: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
    ------------ */
 // TODO: Write a base class / prototype for system services and let Shell inherit from it.
 var TSOS;
@@ -38,6 +41,18 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             // man <topic>
             sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
+            this.commandList[this.commandList.length] = sc;
+            // date
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "Displays the current date.");
+            this.commandList[this.commandList.length] = sc;
+            // whereami
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "Shows you where you are.");
+            this.commandList[this.commandList.length] = sc;
+            // gokitty
+            sc = new TSOS.ShellCommand(this.shellGoKitty, "gokitty", "Run Kitty Run! Run away from this OS!");
+            this.commandList[this.commandList.length] = sc;
+            // hey <name>
+            sc = new TSOS.ShellCommand(this.shellHey, "hey", "<name> - The name you want to say hi to.");
             this.commandList[this.commandList.length] = sc;
             // trace <on | off>
             sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
@@ -251,7 +266,7 @@ var TSOS;
         }
         shellMan(args) {
             if (args.length > 0) {
-                var topic = args[0];
+                let topic = args[0];
                 switch (topic) {
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
@@ -259,14 +274,16 @@ var TSOS;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     case "date":
                         let dateTime = new Date();
-                        _StdOut.putText("In this universe the time is " + dateTime + " on Planet Earth.");
+                        _StdOut.putText("Date displays the date in your current location.");
                         break;
                     case "whereami":
-                        _StdOut.putText("I'm right where you left me");
+                        _StdOut.putText("Whereami guestimates where you might be. The instruments used to calculate this are not precise.");
                         break;
-                    // FINISH THIS
-                    case "":
-                        _StdOut.putText("");
+                    case "gokitty":
+                        _StdOut.putText("Allows kitty to be free and run towards its freedom!");
+                        break;
+                    case "hey":
+                        _StdOut.putText("Hey <name> says hi back to you if you get the kernel's name right.");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -274,6 +291,53 @@ var TSOS;
             }
             else {
                 _StdOut.putText("Usage: man <topic>  Please supply a topic.");
+            }
+        }
+        shellDate() {
+            let dateTime = new Date();
+            _StdOut.putText("In this universe, the time is " + dateTime + " on Planet Earth.");
+        }
+        shellWhereAmI() {
+            let placesYouAre = ["Lost in the mall trying to find mom.",
+                "I'm right where you left me.",
+                "Past event horizon, into the black hole called zerOS.",
+                "In Beyonce's basement having dinner with the other inmates.",
+                "Es mejor si no sabes a dónde vamos.",
+                "In a Venetian beach, getting some radiant light.",
+                "The question isn't where are you, it's when are you.",
+                "YOU'RE FINALLY AWAKE!",
+                "Your coordinates are 53.98N and 78.98W. Oh wait, I'm looking at the wrong map.",
+                "!On ThE dIsCo FlOor!",
+                "I'm just as lost as you are mate."];
+            _StdOut.putText(placesYouAre[Math.floor(Math.random() * 11)]);
+        }
+        shellGoKitty() {
+            console.log("HERE");
+            let catImage = new Image();
+            let catPosition = 0;
+            catImage.src = "source/os/images/kittyImage.png";
+            catImage.onload = runAnimation;
+            function runAnimation() {
+                _DrawingContext.drawImage(catImage, catPosition, _StdOut.currentYPosition - 80, 90, 35);
+                catPosition += 5;
+                if (catPosition < 900) {
+                    requestAnimationFrame(runAnimation);
+                }
+            }
+            _StdOut.currentYPosition += 50;
+        }
+        shellHey(args) {
+            if (args.length > 0) {
+                let name = args[0].toUpperCase();
+                if (name === "SIRI") {
+                    _StdOut.putText("Sorry, I didn't catch that.");
+                }
+                else {
+                    _StdOut.putText("Hello Kind User! My name is not " + name);
+                }
+            }
+            else {
+                _StdOut.putText("Usage: hey <name>");
             }
         }
         shellTrace(args) {

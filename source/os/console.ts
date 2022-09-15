@@ -84,7 +84,7 @@ module TSOS {
                 decided to write one function and use the term "text" to connote string or char.
             */
             for (let text of fullText) {
-                if (this.currentXPosition > 893) {
+                if (this.currentXPosition > 890) {
                     this.advanceLine();
                 }
 
