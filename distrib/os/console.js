@@ -7,7 +7,7 @@
 var TSOS;
 (function (TSOS) {
     class Console {
-        constructor(currentFont = _DefaultFontFamily, currentFontSize = _DefaultFontSize, currentXPosition = 5, currentYPosition = _DefaultFontSize, buffer = "") {
+        constructor(currentFont = _DefaultFontFamily, currentFontSize = _DefaultFontSize, currentXPosition = 5, currentYPosition = 2 * _DefaultFontSize, buffer = "") {
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
@@ -23,7 +23,7 @@ var TSOS;
         }
         resetXY() {
             this.currentXPosition = 5;
-            this.currentYPosition = this.currentFontSize;
+            this.currentYPosition = 2 * this.currentFontSize;
         }
         handleInput() {
             while (_KernelInputQueue.getSize() > 0) {
@@ -90,9 +90,8 @@ var TSOS;
         removeText(delChar) {
             let offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, delChar);
             this.currentXPosition = this.currentXPosition - offset;
-            _DrawingContext.fillStyle = "#DFDBC3";
             let rectHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
-            _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition + (2 * _FontHeightMargin), offset, -rectHeight);
+            _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition + (2 * _FontHeightMargin), offset, -rectHeight);
         }
         advanceLine() {
             this.currentXPosition = 5;
@@ -110,8 +109,7 @@ var TSOS;
             if (this.currentYPosition >= 650) {
                 let oldCanvas = _DrawingContext.getImageData(0, this.currentYPosition, 900, -(650 - incrementYPosition));
                 this.currentYPosition = 650 - incrementYPosition;
-                _DrawingContext.fillStyle = "#DFDBC3";
-                _DrawingContext.fillRect(0, 650, 900, -(incrementYPosition + 3));
+                _DrawingContext.clearRect(0, 650, 900, -(incrementYPosition + 3));
                 _DrawingContext.putImageData(oldCanvas, 0, 0);
             }
         }

@@ -12,7 +12,7 @@ module TSOS {
         constructor(public currentFont = _DefaultFontFamily,
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 5,
-                    public currentYPosition = _DefaultFontSize,
+                    public currentYPosition = 2*_DefaultFontSize,
                     public buffer = "") {
         }
 
@@ -27,7 +27,7 @@ module TSOS {
 
         public resetXY(): void {
             this.currentXPosition = 5;
-            this.currentYPosition = this.currentFontSize;
+            this.currentYPosition = 2*this.currentFontSize;
         }
 
         public handleInput(): void {
@@ -104,11 +104,9 @@ module TSOS {
 
             this.currentXPosition = this.currentXPosition - offset;
 
-            _DrawingContext.fillStyle = "#DFDBC3";
-
             let rectHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
 
-            _DrawingContext.fillRect(this.currentXPosition, this.currentYPosition + (2*_FontHeightMargin),
+            _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition + (2*_FontHeightMargin),
                 offset, -rectHeight);
         }
 
@@ -133,8 +131,7 @@ module TSOS {
 
                 this.currentYPosition = 650 - incrementYPosition;
 
-                _DrawingContext.fillStyle = "#DFDBC3";
-                _DrawingContext.fillRect(0, 650, 900, -(incrementYPosition + 3));
+                _DrawingContext.clearRect(0, 650, 900, -(incrementYPosition + 3));
                 _DrawingContext.putImageData(oldCanvas, 0, 0);
             }
         }

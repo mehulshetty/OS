@@ -17,7 +17,7 @@ var TSOS;
             // Properties
             this.promptStr = ">";
             this.commandList = [];
-            this.commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status", "load", "bsod"];
+            this.commandStringList = ["ver", "help", "shutdown", "cls", "man", "trace", "rot13", "prompt", "status", "load", "bsod", "date", "whereami", "hey", "gokitty"];
             this.commandHistory = new Array();
             this.commandOrder = -1;
             this.curses = "[fuvg],[cvff],[shpx],[phag],[pbpxfhpxre],[zbgureshpxre],[gvgf]";
@@ -188,13 +188,20 @@ var TSOS;
             this.putPrompt();
         }
         parseInput(buffer) {
-            var retVal = new TSOS.UserCommand();
+            let retVal = new TSOS.UserCommand();
             // 1. Remove leading and trailing spaces.
             buffer = TSOS.Utils.trim(buffer);
-            // 2. Lower-case it.
-            buffer = buffer.toLowerCase();
-            // 3. Separate on spaces so we can determine the command and command-line args, if any.
-            var tempList = buffer.split(" ");
+            let tempList = buffer.split(" ");
+            if (!buffer.toLowerCase().startsWith("status")) {
+                // 2. Lower-case it.
+                for (let itemNum = 0; itemNum < tempList.length; itemNum++) {
+                    tempList[itemNum] = tempList[itemNum].toLowerCase();
+                }
+            }
+            else {
+                let tempList = buffer.split(" ");
+                tempList[0] = tempList[0].toLowerCase();
+            }
             // 4. Take the first (zeroth) element and use that as the command.
             var cmd = tempList.shift(); // Yes, you can do that to an array in JavaScript. See the Queue class.
             // 4.1 Remove any left-over spaces.
@@ -273,17 +280,16 @@ var TSOS;
                         break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     case "date":
-                        let dateTime = new Date();
                         _StdOut.putText("Date displays the date in your current location.");
                         break;
                     case "whereami":
-                        _StdOut.putText("Whereami guestimates where you might be. The instruments used to calculate this are not precise.");
+                        _StdOut.putText("Whereami guestimates where you might be. The instruments used to calculate this are not precise so expect an error of about 1-99%.");
                         break;
                     case "gokitty":
-                        _StdOut.putText("Allows kitty to be free and run towards its freedom!");
+                        _StdOut.putText("Allows kitty to be free and run towards its freedom! Just type gokitty and watch kitty fly through the screen.");
                         break;
                     case "hey":
-                        _StdOut.putText("Hey <name> says hi back to you if you get the kernel's name right.");
+                        _StdOut.putText("Hey <name> says hi back to you if you get the kernel's name right. Type hey siri to get answers to any questions from Apple's virtual assistant.");
                         break;
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -421,6 +427,8 @@ var TSOS;
         shellBsod() {
             _DrawingContext.fillStyle = "#0000FF";
             _DrawingContext.fillRect(0, 0, 900, 650);
+            _DrawingContext.fillStyle = "#FFFFFF";
+            _DrawingContext.fillRect(200, 305, 550, -30);
             _StdOut.currentXPosition = 250;
             _StdOut.currentYPosition = 300;
             _StdOut.putText("UNKNOWN_ERROR.EXE was run. Please restart the system.");
