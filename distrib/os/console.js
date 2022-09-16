@@ -46,11 +46,13 @@ var TSOS;
                     this.buffer = _OsShell.handleTab(this.buffer);
                 }
                 else if ((chr === "UP") || (chr === "DOWN")) {
+                    // Removes the current command
                     for (let bufferIndex = this.buffer.length - 1; bufferIndex >= 0; bufferIndex--) {
                         let bufferLetter = this.buffer[bufferIndex];
                         this.removeText(bufferLetter);
                     }
                     this.buffer = _OsShell.handleUpAndDown(chr);
+                    // Writes the previous/next command
                     for (let bufferIndex = 0; bufferIndex <= this.buffer.length - 1; bufferIndex++) {
                         let bufferLetter = this.buffer[bufferIndex];
                         this.putText(bufferLetter);
@@ -75,6 +77,7 @@ var TSOS;
                 decided to write one function and use the term "text" to connote string or char.
             */
             for (let text of fullText) {
+                // Handles Line Wrap
                 if (this.currentXPosition > 890) {
                     this.advanceLine();
                 }
@@ -88,8 +91,10 @@ var TSOS;
             }
         }
         removeText(delChar) {
+            // Calculates the width of the font to remove
             let offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, delChar);
             this.currentXPosition = this.currentXPosition - offset;
+            // Calculates the height of the font to be removed
             let rectHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
             _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition + (2 * _FontHeightMargin), offset, -rectHeight);
         }
@@ -105,7 +110,7 @@ var TSOS;
                 _FontHeightMargin;
             this.currentYPosition += incrementYPosition;
             console.log(this.currentYPosition);
-            // TODO: Handle scrolling. (iProject 1)
+            // Handles Scrolling
             if (this.currentYPosition >= 650) {
                 let oldCanvas = _DrawingContext.getImageData(0, this.currentYPosition, 900, -(650 - incrementYPosition));
                 this.currentYPosition = 650 - incrementYPosition;

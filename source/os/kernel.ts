@@ -169,8 +169,16 @@ module TSOS {
 
         public krnTrapError(msg) {
             Control.hostLog("OS ERROR - TRAP: " + msg);
-            // TODO: Display error on console, perhaps in some sort of colored screen. (Maybe blue?)
-            _OsShell.shellBsod();
+
+            // Displays the Blue Screen of Death
+            _DrawingContext.fillStyle = "#0000FF";
+            _DrawingContext.fillRect(0,0,900,650);
+            _DrawingContext.fillStyle = "#FFFFFF";
+            _DrawingContext.fillRect(200,305,550,-30);
+            _StdOut.currentXPosition = 250;
+            _StdOut.currentYPosition = 300;
+            _StdOut.putText("UNKNOWN_ERROR.EXE was run. Please restart the system.");
+
             this.krnShutdown();
         }
     }

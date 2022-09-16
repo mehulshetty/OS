@@ -134,27 +134,25 @@ module TSOS {
 
         public handleInput(buffer) {
             this.commandHistory.push(buffer);
-            console.log("Command History; ", this.commandHistory);
-            this.commandOrder = this.commandHistory.length - 1;
-            console.log("Command Order; ", this.commandOrder);
+            this.commandOrder = this.commandHistory.length - 1; // Resets the commandOrder to be the current command
 
             _Kernel.krnTrace("Shell Command~" + buffer);
             //
             // Parse the input...
             //
-            var userCommand = this.parseInput(buffer);
+            let userCommand = this.parseInput(buffer);
             // ... and assign the command and args to local variables.
-            var cmd = userCommand.command;
-            var args = userCommand.args;
+            let cmd = userCommand.command;
+            let args = userCommand.args;
             //
             // Determine the command and execute it.
             //
             // TypeScript/JavaScript may not support associative arrays in all browsers so we have to iterate over the
             // command list in attempt to find a match. 
             // TODO: Is there a better way? Probably. Someone work it out and tell me in class.
-            var index: number = 0;
-            var found: boolean = false;
-            var fn = undefined;
+            let index: number = 0;
+            let found: boolean = false;
+            let fn = undefined;
             while (!found && index < this.commandList.length) {
                 if (this.commandList[index].command === cmd) {
                     found = true;
@@ -180,12 +178,14 @@ module TSOS {
         public handleTab(buffer) {
             let possibleCommands = new Array();
 
+            // Finds all commands that could be possible matches for the current buffer
             for (let command of this.commandStringList) {
                 if(command.startsWith(buffer)) {
                     possibleCommands.push(command);
                 }
             }
 
+            // If there's only one command that matches the current buffer, then it replaces the buffer with the command
             if (possibleCommands.length == 1) {
                 _StdOut.putText(possibleCommands[0].slice(buffer.length));
 
@@ -196,6 +196,7 @@ module TSOS {
 
                 let tabString = "No Valid Commands";
 
+                // If there's more than one command that matches the buffer, then display them all
                 if (possibleCommands.length > 1) {
                     tabString = possibleCommands.join(" | ");
                 }
@@ -208,7 +209,7 @@ module TSOS {
                     _StdOut.advanceLine();
                 }
 
-                // ... and finally write the prompt again.
+                //Write the prompt again.
                 this.putPrompt();
                 _StdOut.putText(buffer);
 
@@ -265,6 +266,7 @@ module TSOS {
 
             if(!buffer.toLowerCase().startsWith("status")) {
                 // 2. Lower-case it.
+                console.log("HERE");
                 for (let itemNum = 0; itemNum < tempList.length; itemNum++) {
                     tempList[itemNum] = tempList[itemNum].toLowerCase();
                 }
@@ -408,6 +410,7 @@ module TSOS {
 
             catImage.onload = runAnimation;
 
+            // Runs the actual animation for the cat
             function runAnimation() {
                 _DrawingContext.drawImage(catImage, catPosition, _StdOut.currentYPosition - 80, 90, 35);
                 catPosition += 5;
@@ -488,15 +491,17 @@ module TSOS {
         }
 
         public shellLoad() {
+
+            // Gets the text from the User Input box
             let loadData = (<HTMLInputElement>document.getElementById("taProgramInput")).value;
-            console.log(loadData);
+
             if (loadData !== "") {
                 let validData = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", " "];
                 let isValid = true;
 
                 for (let loadLetter of loadData) {
                     loadLetter = loadLetter.toUpperCase();
-                    console.log(loadLetter);
+
                     if (!validData.includes(loadLetter)) {
                         isValid = false;
                         break;
@@ -514,15 +519,8 @@ module TSOS {
             }
         }
 
-        // TODO: BSOD
         public shellBsod() {
-            _DrawingContext.fillStyle = "#0000FF";
-            _DrawingContext.fillRect(0,0,900,650);
-            _DrawingContext.fillStyle = "#FFFFFF";
-            _DrawingContext.fillRect(200,305,550,-30);
-            _StdOut.currentXPosition = 250;
-            _StdOut.currentYPosition = 300;
-            _StdOut.putText("UNKNOWN_ERROR.EXE was run. Please restart the system.");
+            _Kernel.krnTrapError("BSOD Called");
         }
 
     }
