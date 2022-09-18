@@ -12,6 +12,7 @@ module TSOS {
         constructor(public currentFont = _DefaultFontFamily,
                     public currentFontSize = _DefaultFontSize,
                     public currentXPosition = 5,
+                    public lineWrapXPositionArray = new Array(),
                     public currentYPosition = 2*_DefaultFontSize,
                     public buffer = "") {
         }
@@ -41,6 +42,7 @@ module TSOS {
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
+                    this.lineWrapXPositionArray = []; // Clears the line-wrap x-position array
                 }
                 else if (chr === String.fromCharCode(8)) {
                     let delChar = this.buffer.slice(-1);
@@ -91,6 +93,8 @@ module TSOS {
 
                 // Handles Line Wrap
                 if (this.currentXPosition > 890) {
+                    // Adds the x-position of the line wrap to an array
+                    this.lineWrapXPositionArray.push(this.currentXPosition);
                     this.advanceLine();
                 }
 
@@ -108,14 +112,21 @@ module TSOS {
 
             // Calculates the width of the font to remove
             let offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, delChar);
-
-            this.currentXPosition = this.currentXPosition - offset;
-
             // Calculates the height of the font to be removed
             let rectHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
 
+            this.currentXPosition = this.currentXPosition - offset;
+
             _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition + (2*_FontHeightMargin),
                 offset, -rectHeight);
+
+            // Handles deleting text for line-wrap
+            if(this.currentXPosition <= 5) {
+                this.currentYPosition -= rectHeight;
+                if(this.lineWrapXPositionArray) {
+                    this.currentXPosition = this.lineWrapXPositionArray.pop();
+                }
+            }
         }
 
         public advanceLine(): void {

@@ -7,10 +7,11 @@
 var TSOS;
 (function (TSOS) {
     class Console {
-        constructor(currentFont = _DefaultFontFamily, currentFontSize = _DefaultFontSize, currentXPosition = 5, currentYPosition = 2 * _DefaultFontSize, buffer = "") {
+        constructor(currentFont = _DefaultFontFamily, currentFontSize = _DefaultFontSize, currentXPosition = 5, lineWrapXPositionArray = new Array(), currentYPosition = 2 * _DefaultFontSize, buffer = "") {
             this.currentFont = currentFont;
             this.currentFontSize = currentFontSize;
             this.currentXPosition = currentXPosition;
+            this.lineWrapXPositionArray = lineWrapXPositionArray;
             this.currentYPosition = currentYPosition;
             this.buffer = buffer;
         }
@@ -36,6 +37,7 @@ var TSOS;
                     _OsShell.handleInput(this.buffer);
                     // ... and reset our buffer.
                     this.buffer = "";
+                    this.lineWrapXPositionArray = []; // Clears the line-wrap x-position array
                 }
                 else if (chr === String.fromCharCode(8)) {
                     let delChar = this.buffer.slice(-1);
@@ -79,6 +81,8 @@ var TSOS;
             for (let text of fullText) {
                 // Handles Line Wrap
                 if (this.currentXPosition > 890) {
+                    // Adds the x-position of the line wrap to an array
+                    this.lineWrapXPositionArray.push(this.currentXPosition);
                     this.advanceLine();
                 }
                 if (text !== "") {
@@ -93,10 +97,17 @@ var TSOS;
         removeText(delChar) {
             // Calculates the width of the font to remove
             let offset = _DrawingContext.measureText(this.currentFont, this.currentFontSize, delChar);
-            this.currentXPosition = this.currentXPosition - offset;
             // Calculates the height of the font to be removed
             let rectHeight = _DefaultFontSize + _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) + _FontHeightMargin;
+            this.currentXPosition = this.currentXPosition - offset;
             _DrawingContext.clearRect(this.currentXPosition, this.currentYPosition + (2 * _FontHeightMargin), offset, -rectHeight);
+            // Handles deleting text for line-wrap
+            if (this.currentXPosition <= 5) {
+                this.currentYPosition -= rectHeight;
+                if (this.lineWrapXPositionArray) {
+                    this.currentXPosition = this.lineWrapXPositionArray.pop();
+                }
+            }
         }
         advanceLine() {
             this.currentXPosition = 5;
