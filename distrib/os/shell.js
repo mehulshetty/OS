@@ -201,8 +201,7 @@ var TSOS;
                 }
             }
             else {
-                let tempList = buffer.split(" ");
-                tempList[0] = tempList[0].toLowerCase();
+                tempList = ["status", buffer.slice(7)];
             }
             // 4. Take the first (zeroth) element and use that as the command.
             var cmd = tempList.shift(); // Yes, you can do that to an array in JavaScript. See the Queue class.
@@ -404,8 +403,9 @@ var TSOS;
         shellLoad() {
             // Gets the text from the User Input box
             let loadData = document.getElementById("taProgramInput").value;
+            loadData = loadData.replace(/\s/g, '');
             if (loadData !== "") {
-                let validData = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", " "];
+                let validData = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
                 let isValid = true;
                 for (let loadLetter of loadData) {
                     loadLetter = loadLetter.toUpperCase();
