@@ -62,8 +62,8 @@ let _krnKeyboardDriver: TSOS.DeviceDriverKeyboard  = null;
 let _hardwareClockID: number = null;
 
 // For testing (and enrichment)...
-let Glados: any = null;  // This is the function Glados() in glados-ip*.js http://alanclasses.github.io/TSOS/test/ .
-let _GLaDOS: any = null; // If the above is linked in, this is the instantiated instance of Glados.
+var Glados: any = null;  // This is the function Glados() in glados-ip*.js http://alanclasses.github.io/TSOS/test/ .
+var _GLaDOS: any = null; // If the above is linked in, this is the instantiated instance of Glados.
 
 let onDocumentLoad = function() {
 	TSOS.Control.hostInit();
