@@ -47,36 +47,38 @@
 <div id="divMain" style="width:100%;">
 
    <nav class="navbar navbar-dark bg-dark">
-      <button class="btn btn-outline-success"
-              id="btnStartOS"
-              name="brnStartOS"
-              value="Start"
-              tabindex="0"
-              onclick="TSOS.Control.hostBtnStartOS_click(this);"
-      >
-         <i class="fa-regular fa-play"></i>
-      </button>
-      <button
-             id = "btnHaltOS"
-             name="brnHaltOS"
-             class="btn btn-outline-warning"
-             disabled="disabled"
-             value="Halt"
-             tabindex="1"
-             onclick="TSOS.Control.hostBtnHaltOS_click(this);">
-         <i class="fa-regular fa-pause"></i>
-      </button>
+      <div class="btn-group">
+         <button class="btn btn-outline-success"
+                 id="btnStartOS"
+                 name="brnStartOS"
+                 value="Start"
+                 tabindex="0"
+                 onclick="TSOS.Control.hostBtnStartOS_click(this);"
+         >
+            <i class="fa-regular fa-play"></i>
+         </button>
+         <button
+                id = "btnHaltOS"
+                name="brnHaltOS"
+                class="btn btn-outline-warning"
+                disabled="disabled"
+                value="Halt"
+                tabindex="1"
+                onclick="TSOS.Control.hostBtnHaltOS_click(this);">
+            <i class="fa-regular fa-pause"></i>
+         </button>
 
-      <button type="button"
-             id = "btnReset"
-             name="brnReset"
-             class="btn btn-outline-danger"
-             disabled="disabled"
-             value="Restart"
-             tabindex="2"
-             onclick="TSOS.Control.hostBtnReset_click(this);">
-         <i class="fa-regular fa-rotate-right"></i>
-      </button>
+         <button type="button"
+                id = "btnReset"
+                name="brnReset"
+                class="btn btn-outline-danger"
+                disabled="disabled"
+                value="Restart"
+                tabindex="2"
+                onclick="TSOS.Control.hostBtnReset_click(this);">
+            <i class="fa-regular fa-rotate-right"></i>
+         </button>
+      </div>
       <h1>zerOS</h1>
       <input type="text"
              id = "currentDateAndTime"
@@ -93,9 +95,10 @@
                  style="border-radius: 15px;">
          </canvas>
       </div>
-      <div style="padding-left: 400px">
-         <div style="margin-left:520px;">
-            <table class="table table-dark" style="border-radius: 5px;">
+      <div style="padding-left: 10px; height: 650px; overflow-y: scroll;" >
+         <br>
+         <div style="">
+            <table class="table table-dark" style="border-radius: 10px;">
                <thead class="thead-dark">
                <tr>
                   <th scope="col">PC</th>
@@ -118,7 +121,7 @@
                </tbody>
             </table>
          </div>
-         <div style="margin-left:520px;overflow-y:scroll; max-height:200px;">
+         <div style="overflow-y:scroll; max-height:200px;">
             <table class="table table-dark" style="border-radius: 5px;">
                <thead class="thead-dark">
                <tr>
@@ -129,26 +132,26 @@
                </tbody>
             </table>
          </div>
-         <div id="divUserProgramInput" style="margin-left:520px;">
+         <div id="divUserProgramInput">
             <label>
                User Program Input
                <br>
                <textarea name="taProgramInput"
                          id  ="taProgramInput"
                          rows="10"
-                         cols="70"
+                         cols="100"
                          class="bg-dark text-white"
                ></textarea>
             </label>
          </div>
-         <div id="divLog" style="margin-left:520px;">
+         <div id="divLog">
             <label>
                Host Log
                <br>
                <textarea name="taHostLog"
                          id  ="taHostLog"
                          rows="10"
-                         cols="70"
+                         cols="100"
                          class="bg-dark text-white"
                          readonly
                ></textarea>
@@ -159,14 +162,14 @@
 </div>
 
 <br>
-<div>
+<br>
+<div style="margin-top: 20px;">
    <input type="text"
           id = "status"
           value="STATUS:"
           style = "height: 30px;"
           readonly>
 </div>
-<br>
 
 <p class="footerText" style="clear:both; color: white; font-family: 'Comic Sans MS'">
    <br>

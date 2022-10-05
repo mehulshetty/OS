@@ -49,6 +49,7 @@ let _SarcasticMode = false;
 // Global Device Driver Objects - page 12
 let _krnKeyboardDriver = null;
 let _hardwareClockID = null;
+let isCtrl = false;
 // For testing (and enrichment)...
 var Glados = null; // This is the function Glados() in glados-ip*.js http://alanclasses.github.io/TSOS/test/ .
 var _GLaDOS = null; // If the above is linked in, this is the instantiated instance of Glados.

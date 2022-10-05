@@ -29,16 +29,7 @@ module TSOS {
         }
 
         public init(): void {
-                this.brkFlag = 0x0;
-                this.step = 0x0;
-                this.IR = 0x00;
-                this.carryFlag = 0x0;
-                this.PC = 0x00;
-                this.acc = 0x00;
-                this.xReg = 0x00;
-                this.yReg = 0x00;
-                this.zFlag = 0x0;
-                this.isExecuting = false;
+            this.clearAll();
         }
 
         public connectMemoryAccessor(): void {
@@ -385,6 +376,7 @@ module TSOS {
                     else {
                         // super.log("SYSTEM SHUTDOWN");
                         // process.exit(0);
+                        this.clearAll();
                     }
                     break;
 
@@ -551,6 +543,19 @@ module TSOS {
             if (this.PC > 0xFFFF) {
                 this.PC -= 0x10000;
             }
+        }
+
+        public clearAll(): void {
+            this.isExecuting = false;
+            this.brkFlag = 0x0;
+            this.step = 0x0;
+            this.IR = 0x00;
+            this.carryFlag = 0x0;
+            this.PC = 0x00;
+            this.acc = 0x00;
+            this.xReg = 0x00;
+            this.yReg = 0x00;
+            this.zFlag = 0x0;
         }
     }
 }

@@ -27,16 +27,7 @@ var TSOS;
             this.isExecuting = isExecuting;
         }
         init() {
-            this.brkFlag = 0x0;
-            this.step = 0x0;
-            this.IR = 0x00;
-            this.carryFlag = 0x0;
-            this.PC = 0x00;
-            this.acc = 0x00;
-            this.xReg = 0x00;
-            this.yReg = 0x00;
-            this.zFlag = 0x0;
-            this.isExecuting = false;
+            this.clearAll();
         }
         connectMemoryAccessor() {
             this.memoryAccessor = _MemoryAccessor;
@@ -361,6 +352,7 @@ var TSOS;
                     else {
                         // super.log("SYSTEM SHUTDOWN");
                         // process.exit(0);
+                        this.clearAll();
                     }
                     break;
             }
@@ -508,6 +500,18 @@ var TSOS;
             if (this.PC > 0xFFFF) {
                 this.PC -= 0x10000;
             }
+        }
+        clearAll() {
+            this.isExecuting = false;
+            this.brkFlag = 0x0;
+            this.step = 0x0;
+            this.IR = 0x00;
+            this.carryFlag = 0x0;
+            this.PC = 0x00;
+            this.acc = 0x00;
+            this.xReg = 0x00;
+            this.yReg = 0x00;
+            this.zFlag = 0x0;
         }
     }
     TSOS.Cpu = Cpu;
