@@ -40,37 +40,40 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
             // man <topic>
-            sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
+            sc = new TSOS.ShellCommand(this.shellMan, "man", "- <topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
             // date
-            sc = new TSOS.ShellCommand(this.shellDate, "date", "Displays the current date.");
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date.");
             this.commandList[this.commandList.length] = sc;
             // whereami
-            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "Shows you where you are.");
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Shows you where you are.");
             this.commandList[this.commandList.length] = sc;
             // gokitty
-            sc = new TSOS.ShellCommand(this.shellGoKitty, "gokitty", "Run Kitty Run! Run away from this OS!");
+            sc = new TSOS.ShellCommand(this.shellGoKitty, "gokitty", "- Run Kitty Run! Run away from this OS!");
             this.commandList[this.commandList.length] = sc;
             // hey <name>
-            sc = new TSOS.ShellCommand(this.shellHey, "hey", "<name> - The name you want to say hi to.");
+            sc = new TSOS.ShellCommand(this.shellHey, "hey", "- <name> - The name you want to say hi to.");
             this.commandList[this.commandList.length] = sc;
             // trace <on | off>
-            sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
+            sc = new TSOS.ShellCommand(this.shellTrace, "trace", "- <on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
             // rot13 <string>
-            sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "<string> - Does rot13 obfuscation on <string>.");
+            sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "- <string> - Does rot13 obfuscation on <string>.");
             this.commandList[this.commandList.length] = sc;
             // prompt <string>
-            sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
+            sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "- <string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
             // status <string>
-            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the status message.");
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "- <string> - Sets the status message.");
             this.commandList[this.commandList.length] = sc;
             // load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "Loads the user input and checks if it is valid HEX.");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the user input and checks if it is valid HEX.");
             this.commandList[this.commandList.length] = sc;
             // bsod
-            sc = new TSOS.ShellCommand(this.shellBsod, "bsod", "Displays the blue screen of death.");
+            sc = new TSOS.ShellCommand(this.shellBsod, "bsod", "- Displays the blue screen of death.");
+            this.commandList[this.commandList.length] = sc;
+            // bsod
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "- <pid> - Runs a program from memory.");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -195,7 +198,6 @@ var TSOS;
             let tempList = buffer.split(" ");
             if (!buffer.toLowerCase().startsWith("status")) {
                 // 2. Lower-case it.
-                console.log("HERE");
                 for (let itemNum = 0; itemNum < tempList.length; itemNum++) {
                     tempList[itemNum] = tempList[itemNum].toLowerCase();
                 }
@@ -319,7 +321,6 @@ var TSOS;
             _StdOut.putText(placesYouAre[Math.floor(Math.random() * 11)]);
         }
         shellGoKitty() {
-            console.log("HERE");
             let catImage = new Image();
             let catPosition = 0;
             catImage.src = "source/os/images/kittyImage.png";
@@ -415,7 +416,11 @@ var TSOS;
                     }
                 }
                 if (isValid) {
-                    _StdOut.putText("The input user code is VALID.");
+                    // _StdOut.putText("The input user code is VALID.");
+                    let loadDataArray = loadData.match(/.{1,2}/g);
+                    let newPid = _MemoryManager.store(loadDataArray);
+                    let pidString = "Process " + newPid + " created.";
+                    _StdOut.putText(pidString);
                 }
                 else {
                     _StdOut.putText("The input user code is INVALID.");
@@ -423,6 +428,12 @@ var TSOS;
             }
             else {
                 _StdOut.putText("Usage: prompt <load>  Please load some user code.");
+            }
+        }
+        shellRun(args) {
+            if (args.length > 0) {
+                let commandPid = args[0];
+                _MemoryManager.run(parseInt(commandPid));
             }
         }
         shellBsod() {

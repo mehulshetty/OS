@@ -120,7 +120,6 @@ var TSOS;
                 _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                 _FontHeightMargin;
             this.currentYPosition += incrementYPosition;
-            console.log(this.currentYPosition);
             // Handles Scrolling
             if (this.currentYPosition >= 650) {
                 let oldCanvas = _DrawingContext.getImageData(0, this.currentYPosition, 900, -(650 - incrementYPosition));

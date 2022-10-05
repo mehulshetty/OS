@@ -1,12 +1,12 @@
-module TSOS {
-    export class MemoryManager {
-
-        constructor (public memoryAccessor: TSOS.MemoryAccessor = null,
-                     public pid = 0) {
+var TSOS;
+(function (TSOS) {
+    class MemoryManager {
+        constructor(memoryAccessor = null, pid = 0) {
+            this.memoryAccessor = memoryAccessor;
+            this.pid = pid;
         }
-
-        public store(loadDataArray: string[]): number {
-            for(let i = 0; i < 3; i++) {
+        store(loadDataArray) {
+            for (let i = 0; i < 3; i++) {
                 let currentAddress = this.memoryAccessor.getAddress();
                 this.memoryAccessor.setAddress(i * 0x100);
                 if (this.memoryAccessor.getData() == 0x0) {
@@ -18,13 +18,13 @@ module TSOS {
                     break;
                 }
             }
-
             return this.pid++;
         }
-
-        public run (commandPid: number) {
+        run(commandPid) {
             _CPU.isExecuting = true;
             _CPU.PC = 0x00;
         }
     }
-}
+    TSOS.MemoryManager = MemoryManager;
+})(TSOS || (TSOS = {}));
+//# sourceMappingURL=memoryManager.js.map

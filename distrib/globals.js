@@ -21,6 +21,10 @@ const KEYBOARD_IRQ = 1;
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 let _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+let _Memory;
+let _MemoryAccessor;
+let _MemoryManager;
+let _PCB;
 let _OSClock = 0; // Page 23.
 let _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 let _Canvas; // Initialized in Control.hostInit().

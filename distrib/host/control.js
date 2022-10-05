@@ -70,6 +70,16 @@ var TSOS;
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            _Memory = new TSOS.Memory();
+            _Memory.init();
+            _MemoryAccessor = new TSOS.MemoryAccessor(0x000, 0x00, _Memory);
+            _CPU.connectMemoryAccessor();
+            _MemoryManager = new TSOS.MemoryManager(_MemoryAccessor);
+            _PCB = new TSOS.PCB();
+            setInterval(() => {
+                this.updateCpuViewRow();
+                this.updateMemoryViewBody();
+            }, 100);
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -96,6 +106,28 @@ var TSOS;
             let dateAndTimeObject = document.getElementById("currentDateAndTime");
             let updatedDateAndTime = new Date();
             dateAndTimeObject.value = updatedDateAndTime.toUTCString();
+        }
+        static updateCpuViewRow() {
+            let updatedHtmlText = "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>"
+                + "<td>" + _CPU.IR.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.acc.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.xReg.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.yReg.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.zFlag.toString(16) + "</td>";
+            document.getElementById("cpuViewRow").innerHTML = updatedHtmlText;
+            console.log("PC: ", _CPU.PC.toString(16).padStart(3, '0'), " | IR: ", _CPU.IR.toString(16).padStart(2, '0'), " | ACC: ", _CPU.acc.toString(16).padStart(2, '0'), " | X: ", _CPU.xReg.toString(16).padStart(2, '0'), " | Y: ", _CPU.yReg.toString(16).padStart(2, '0'), " | Z: ", _CPU.zFlag);
+        }
+        static updateMemoryViewBody() {
+            let updatedHtmlText = "";
+            for (let rowStart = 0x000; rowStart < 0x300; rowStart += 0x08) {
+                updatedHtmlText += "<tr><th>0x" + rowStart.toString(16).padStart(3, '0') + "</th>";
+                for (let i = 0x0; i < 0x8; i++) {
+                    updatedHtmlText += "<td>" + _Memory.storage[rowStart + i].toString(16).padStart(2, '0')
+                        + "</td>";
+                }
+                updatedHtmlText += "</tr>";
+            }
+            document.getElementById("memoryViewBody").innerHTML = updatedHtmlText;
         }
     }
     TSOS.Control = Control;
