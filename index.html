@@ -38,7 +38,7 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment the line below to enable GLaDOS testing. -->
-   <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip0.js"></script>
+   <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip2.js"></script>
    
 </head>
 
@@ -64,7 +64,8 @@
                 disabled="disabled"
                 value="Halt"
                 tabindex="1"
-                onclick="TSOS.Control.hostBtnHaltOS_click(this);">
+                onclick="TSOS.Control.hostBtnHaltOS_click(this);"
+                style="display: none;">
             <i class="fa-regular fa-pause"></i>
          </button>
 
@@ -77,6 +78,25 @@
                 tabindex="2"
                 onclick="TSOS.Control.hostBtnReset_click(this);">
             <i class="fa-regular fa-rotate-right"></i>
+         </button>
+      </div>
+      <div class="btn-group">
+         <button type = "button"
+                 class ="btn btn-success"
+                 id = "btnSingleStep"
+                 value = "Start"
+                 disabled = "disabled"
+                 onclick = "TSOS.Control.hostSingleStep(this);"
+         >
+            Start Single Step
+         </button>
+         <button type = "button"
+                 class = "btn btn-light"
+                 id = "btnNextStep"
+                 value = "Next"
+                 disabled = "disabled"
+                 onclick = "TSOS.Control.hostNextStep();">
+            <i class="fa-solid fa-angle-right"></i>
          </button>
       </div>
       <h1>zerOS</h1>
@@ -97,8 +117,8 @@
       </div>
       <div style="padding-left: 10px; height: 650px; overflow-y: scroll;" >
          <br>
-         <div style="">
-            <table class="table table-dark" style="border-radius: 10px;">
+         <div>
+            <table class="table table-dark">
                <thead class="thead-dark">
                <tr>
                   <th scope="col">PC</th>
@@ -121,14 +141,36 @@
                </tbody>
             </table>
          </div>
+         <br>
          <div style="overflow-y:scroll; max-height:200px;">
-            <table class="table table-dark" style="border-radius: 5px;">
+            <table class="table table-dark">
                <thead class="thead-dark">
                <tr>
                   <th>Memory View</th>
                </tr>
                </thead>
                <tbody id="memoryViewBody">
+               </tbody>
+            </table>
+         </div>
+         <br>
+         <div style="overflow-y:scroll; max-height:200px;">
+            <table class="table table-dark rounded-10">
+               <thead class="thead-dark">
+               <tr>
+                  <th>Processes</th>
+               </tr>
+               <tr>
+                  <th scope="col">PID</th>
+                  <th scope="col">PC</th>
+                  <th scope="col">IR</th>
+                  <th scope="col">ACC</th>
+                  <th scope="col">X</th>
+                  <th scope="col">Y</th>
+                  <th scope="col">Z</th>
+               </tr>
+               </thead>
+               <tbody id="processViewBody">
                </tbody>
             </table>
          </div>

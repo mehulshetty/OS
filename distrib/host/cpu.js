@@ -395,6 +395,8 @@ var TSOS;
                         // For System Call when xReg == 1: Prints the number in the Y Register
                         case 0x01:
                             _StdOut.putText(this.yReg.toString(16).toUpperCase());
+                            _Console.advanceLine();
+                            _OsShell.putPrompt();
                             this.step = 0x0;
                             break;
                         // For System Call when xReg == 2:

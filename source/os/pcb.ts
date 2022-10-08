@@ -5,13 +5,13 @@ module TSOS {
         }
 
         public addBlock (CPU: TSOS.Cpu): void {
-            this.blocks.push([CPU.IR, CPU.PC, CPU.acc, CPU.xReg, CPU.yReg, CPU.zFlag, CPU.step, CPU.brkFlag]);
+            this.blocks.push([CPU.PC, CPU.IR, CPU.acc, CPU.xReg, CPU.yReg, CPU.zFlag, CPU.step, CPU.brkFlag]);
         }
 
         public getBlock (CPU: TSOS.Cpu): void {
             let previousBlock = this.blocks.pop();
-            CPU.IR = previousBlock[0];
-            CPU.PC = previousBlock[1];
+            CPU.PC = previousBlock[0];
+            CPU.IR = previousBlock[1];
             CPU.acc = previousBlock[2];
             CPU.xReg = previousBlock[3];
             CPU.yReg = previousBlock[4];
