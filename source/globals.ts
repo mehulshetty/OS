@@ -29,7 +29,6 @@ let _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure th
 let _Memory: TSOS.Memory;
 let _MemoryAccessor: TSOS.MemoryAccessor;
 let _MemoryManager: TSOS.MemoryManager;
-let _PCB: TSOS.PCB;
 
 let _OSClock: number = 0;  // Page 23.
 
@@ -66,6 +65,8 @@ let _krnKeyboardDriver: TSOS.DeviceDriverKeyboard  = null;
 let _hardwareClockID: number = null;
 
 let isCtrl: boolean = false;
+
+let readyQueue: TSOS.PCB[] = [];
 
 // For testing (and enrichment)...
 var Glados: any = null;  // This is the function Glados() in glados-ip*.js http://alanclasses.github.io/TSOS/test/ .

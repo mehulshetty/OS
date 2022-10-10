@@ -517,6 +517,7 @@ module TSOS {
                     let loadDataArray = loadData.match(/.{1,2}/g);
                     let newPid = _MemoryManager.store(loadDataArray);
                     let pidString = "Process " + newPid + " created.";
+                    readyQueue.push(new PCB(newPid, 0x000, 0x100));
                     _StdOut.putText(pidString);
                 }
                 else {
@@ -534,8 +535,13 @@ module TSOS {
             }
         }
 
-        public shellBsod() {
-            _Kernel.krnTrapError("BSOD Called");
+        public shellBsod(args: string[]) {
+            if (args.length > 0) {
+                _Kernel.krnTrapError(args.join(' '));
+            }
+            else {
+                _Kernel.krnTrapError("UNKNOWN_ERROR.EXE was run. Please restart the system.");
+            }
         }
 
     }

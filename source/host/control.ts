@@ -101,7 +101,6 @@ module TSOS {
             _CPU.connectMemoryAccessor();
 
             _MemoryManager = new MemoryManager(_MemoryAccessor);
-            _PCB = new PCB();
 
             setInterval(() => {
                 this.updateCpuViewRow();
@@ -184,17 +183,18 @@ module TSOS {
 
         public static updateProcessViewBody(): void {
 
-            let updatedHtmlText = ""
+            let updatedHtmlText = "";
 
-            for(let blockRow = 0x000; blockRow < _PCB.blocks.length ; blockRow++ ) {
-                let block = _PCB.blocks[blockRow];
-                updatedHtmlText += "<tr><th>" + _MemoryManager.pid + "</th>";
-                updatedHtmlText += "<td>" + block[0].toString(16).padStart(3, '0') + "</td>";
-                for(let blockItem = 0x1; blockItem < 0x6; blockItem++) {
-                    updatedHtmlText += "<td>" + block[blockItem].toString(16).padStart(2, '0')
-                        + "</td>";
-                }
-
+            for(let blockRow = 0x0; blockRow < readyQueue.length; blockRow++) {
+                let block = readyQueue[blockRow];
+                updatedHtmlText += "<tr><th>" + block.pid + "</th>";
+                updatedHtmlText += "<td>" + block.pc.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + block.ir.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + block.acc.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + block.xReg.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + block.yReg.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + block.zFlag.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + block.state + "</td>";
                 updatedHtmlText += "</tr>";
             }
 

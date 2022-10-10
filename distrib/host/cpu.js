@@ -288,7 +288,7 @@ var TSOS;
                             }
                             // If the Zero Flag is not set, then it changes the PC with the specified value
                             else {
-                                this.twoCompAdder(this.fetch());
+                                this.branchAdder(this.fetch());
                             }
                             this.step = 0x0;
                             break;
@@ -353,6 +353,9 @@ var TSOS;
                         // super.log("SYSTEM SHUTDOWN");
                         // process.exit(0);
                         this.clearAll();
+                        _Console.advanceLine();
+                        _OsShell.putPrompt();
+                        readyQueue.shift();
                     }
                     break;
             }
@@ -395,14 +398,12 @@ var TSOS;
                         // For System Call when xReg == 1: Prints the number in the Y Register
                         case 0x01:
                             _StdOut.putText(this.yReg.toString(16).toUpperCase());
-                            _Console.advanceLine();
-                            _OsShell.putPrompt();
                             this.step = 0x0;
                             break;
                         // For System Call when xReg == 2:
-                        // Sets the contextPC with the number in the PC and sets the PC with the address in the Y Register
+                        // Sets the PCB with the values in the CPU and sets the PC with the address in the Y Register
                         case 0x02:
-                            _PCB.addBlock(_CPU);
+                            readyQueue[0].saveContext(_CPU);
                             this.PC = this.yReg;
                             this.step += 1;
                             break;
@@ -423,9 +424,7 @@ var TSOS;
                             // If data is equal to 0x00, returns PC to its original state and sets contextPC back to 0x0000
                             else {
                                 // process.stdout.write(ASCII.decode(0x0A));
-                                _Console.advanceLine();
-                                _OsShell.putPrompt();
-                                _PCB.getBlock(_CPU);
+                                readyQueue[0].getContext(_CPU);
                                 this.step = 0x0;
                             }
                             break;
@@ -433,7 +432,12 @@ var TSOS;
                     break;
                 // Gets the data from the Memory from the address given in the address member in the MMU
                 case 0x03:
-                    return this.memoryAccessor.getData();
+                    if (this.memoryAccessor.getAddress() >= 0x000 && this.memoryAccessor.getAddress() < 0x100) {
+                        return this.memoryAccessor.getData();
+                    }
+                    else {
+                        this.memoryAccessError();
+                    }
                 // Checks if value1 is equal to a given location in memory
                 case 0x04:
                     // Returns 0x1 if value1 is equal to the location in memory
@@ -486,21 +490,16 @@ var TSOS;
             }
         }
         /**
-         * TWO'S COMP ADDER - Adds the parameter to the Program Counter in Two's Complement
+         * BRANCH ADDER - Adds the parameter to the Program Counter
          * @param number the number that has to be added to the program counter
          */
-        twoCompAdder(number) {
-            // Positive Case - if the number is lesser then 0x80, adds it to the PC
-            if (number < 0x80) {
-                this.PC += number;
+        branchAdder(number) {
+            let newPC = this.PC + number;
+            if (newPC < 0x100) {
+                this.PC = newPC;
             }
-            // Negative Case - converts the two's comp number to decimal and subtracts it from the PC
             else {
-                this.PC += (number - 0xFF - 0x1);
-            }
-            // Takes care of overflow (by disregarding the leftmost digit)
-            if (this.PC > 0xFFFF) {
-                this.PC -= 0x10000;
+                this.PC = newPC % 0x100;
             }
         }
         clearAll() {
@@ -514,6 +513,9 @@ var TSOS;
             this.xReg = 0x00;
             this.yReg = 0x00;
             this.zFlag = 0x0;
+        }
+        memoryAccessError() {
+            _Kernel.krnTrapError("Memory Access Violation");
         }
     }
     TSOS.Cpu = Cpu;

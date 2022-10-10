@@ -24,7 +24,6 @@ let _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is 
 let _Memory;
 let _MemoryAccessor;
 let _MemoryManager;
-let _PCB;
 let _OSClock = 0; // Page 23.
 let _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 let _Canvas; // Initialized in Control.hostInit().
@@ -50,6 +49,7 @@ let _SarcasticMode = false;
 let _krnKeyboardDriver = null;
 let _hardwareClockID = null;
 let isCtrl = false;
+let readyQueue = [];
 // For testing (and enrichment)...
 var Glados = null; // This is the function Glados() in glados-ip*.js http://alanclasses.github.io/TSOS/test/ .
 var _GLaDOS = null; // If the above is linked in, this is the instantiated instance of Glados.
