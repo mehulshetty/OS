@@ -24,7 +24,7 @@ module TSOS {
                     public acc: number = 0x00,
                     public xReg: number = 0x00,
                     public yReg: number = 0x00,
-                    public zFlag: number = 0x0,
+                    public zFlag: number = 0x00,
                     public isExecuting: boolean = false) {
         }
 
@@ -379,7 +379,7 @@ module TSOS {
                         this.clearAll();
                         _Console.advanceLine();
                         _OsShell.putPrompt();
-                        readyQueue.shift();
+                        readyQueue[_MemoryManager.executingPid].state = "Completed";
                     }
                     break;
 
@@ -437,7 +437,7 @@ module TSOS {
                         // For System Call when xReg == 2:
                         // Sets the PCB with the values in the CPU and sets the PC with the address in the Y Register
                         case 0x02:
-                            readyQueue[0].saveContext(_CPU);
+                            readyQueue[_MemoryManager.executingPid].saveContext(_CPU);
                             this.PC = this.yReg;
                             this.step += 1;
                             break;
@@ -461,7 +461,7 @@ module TSOS {
                             // If data is equal to 0x00, returns PC to its original state and sets contextPC back to 0x0000
                             else {
                                 // process.stdout.write(ASCII.decode(0x0A));
-                                readyQueue[0].getContext(_CPU);
+                                readyQueue[_MemoryManager.executingPid].getContext(_CPU);
                                 this.step = 0x0;
                             }
                             break;
@@ -560,6 +560,9 @@ module TSOS {
             this.zFlag = 0x0;
         }
 
+        /**
+         * Calls the BSOD when there's a memory access violation
+         */
         public memoryAccessError(): void {
             _Kernel.krnTrapError("Memory Access Violation");
         }

@@ -1,3 +1,9 @@
+/* ------------
+   memoryAccessor.ts
+
+   This virtual memory accessor "reads" and "writes" into "memory".
+   ------------ */
+
 module TSOS {
     export class MemoryAccessor {
 

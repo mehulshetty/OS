@@ -13,7 +13,7 @@
 var TSOS;
 (function (TSOS) {
     class Cpu {
-        constructor(memoryAccessor = null, brkFlag = 0x0, step = 0x0, IR = 0x00, carryFlag = 0x0, PC = 0x00, acc = 0x00, xReg = 0x00, yReg = 0x00, zFlag = 0x0, isExecuting = false) {
+        constructor(memoryAccessor = null, brkFlag = 0x0, step = 0x0, IR = 0x00, carryFlag = 0x0, PC = 0x00, acc = 0x00, xReg = 0x00, yReg = 0x00, zFlag = 0x00, isExecuting = false) {
             this.memoryAccessor = memoryAccessor;
             this.brkFlag = brkFlag;
             this.step = step;
@@ -355,7 +355,7 @@ var TSOS;
                         this.clearAll();
                         _Console.advanceLine();
                         _OsShell.putPrompt();
-                        readyQueue.shift();
+                        readyQueue[_MemoryManager.executingPid].state = "Completed";
                     }
                     break;
             }
@@ -403,7 +403,7 @@ var TSOS;
                         // For System Call when xReg == 2:
                         // Sets the PCB with the values in the CPU and sets the PC with the address in the Y Register
                         case 0x02:
-                            readyQueue[0].saveContext(_CPU);
+                            readyQueue[_MemoryManager.executingPid].saveContext(_CPU);
                             this.PC = this.yReg;
                             this.step += 1;
                             break;
@@ -424,7 +424,7 @@ var TSOS;
                             // If data is equal to 0x00, returns PC to its original state and sets contextPC back to 0x0000
                             else {
                                 // process.stdout.write(ASCII.decode(0x0A));
-                                readyQueue[0].getContext(_CPU);
+                                readyQueue[_MemoryManager.executingPid].getContext(_CPU);
                                 this.step = 0x0;
                             }
                             break;
@@ -514,6 +514,9 @@ var TSOS;
             this.yReg = 0x00;
             this.zFlag = 0x0;
         }
+        /**
+         * Calls the BSOD when there's a memory access violation
+         */
         memoryAccessError() {
             _Kernel.krnTrapError("Memory Access Violation");
         }

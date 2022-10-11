@@ -139,22 +139,25 @@ var TSOS;
         }
         static updateProcessViewBody() {
             let updatedHtmlText = "";
-            for (let blockRow = 0x0; blockRow < readyQueue.length; blockRow++) {
-                let block = readyQueue[blockRow];
+            if (_CPU.isExecuting) {
+                // for(let blockRow = 0x0; blockRow < readyQueue.length; blockRow++) {
+                let block = readyQueue[_MemoryManager.executingPid];
                 updatedHtmlText += "<tr><th>" + block.pid + "</th>";
-                updatedHtmlText += "<td>" + block.pc.toString(16).padStart(3, '0') + "</td>";
-                updatedHtmlText += "<td>" + block.ir.toString(16).padStart(3, '0') + "</td>";
-                updatedHtmlText += "<td>" + block.acc.toString(16).padStart(3, '0') + "</td>";
-                updatedHtmlText += "<td>" + block.xReg.toString(16).padStart(3, '0') + "</td>";
-                updatedHtmlText += "<td>" + block.yReg.toString(16).padStart(3, '0') + "</td>";
-                updatedHtmlText += "<td>" + block.zFlag.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + _CPU.IR.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + _CPU.acc.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + _CPU.xReg.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + _CPU.yReg.toString(16).padStart(3, '0') + "</td>";
+                updatedHtmlText += "<td>" + _CPU.zFlag.toString(16).padStart(3, '0') + "</td>";
                 updatedHtmlText += "<td>" + block.state + "</td>";
                 updatedHtmlText += "</tr>";
+                // }
             }
             document.getElementById("processViewBody").innerHTML = updatedHtmlText;
         }
         static hostSingleStep(btn) {
             let btnValue = document.getElementById("btnSingleStep").value;
+            // Code runs when starting Single Step
             if (btnValue == "Start") {
                 document.getElementById("btnSingleStep").value = "Stop";
                 document.getElementById("btnNextStep").disabled = false;
@@ -162,6 +165,7 @@ var TSOS;
                 document.getElementById("btnSingleStep").innerText = "Stop Single Step";
                 document.getElementById("btnSingleStep").className = "btn btn-danger";
             }
+            // Code runs when stopping Single Step
             else {
                 document.getElementById("btnSingleStep").value = "Start";
                 document.getElementById("btnNextStep").disabled = true;

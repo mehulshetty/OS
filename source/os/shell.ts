@@ -515,9 +515,12 @@ module TSOS {
                 if(isValid) {
                     // _StdOut.putText("The input user code is VALID.");
                     let loadDataArray = loadData.match(/.{1,2}/g);
+
+                    // Creates a new process and pushes it onto the ready queue
                     let newPid = _MemoryManager.store(loadDataArray);
                     let pidString = "Process " + newPid + " created.";
-                    readyQueue.push(new PCB(newPid, 0x000, 0x100));
+                    readyQueue.push(new PCB(newPid, 0x000, 0x100, "Ready"));
+
                     _StdOut.putText(pidString);
                 }
                 else {

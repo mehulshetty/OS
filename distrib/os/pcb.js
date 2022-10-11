@@ -1,10 +1,16 @@
+/* ------------
+   PCB.ts
+
+   Contains the class for the PCB for each process
+   ------------ */
 var TSOS;
 (function (TSOS) {
     class PCB {
-        constructor(pid, baseRegister, limitRegister, pc = 0x000, ir = 0x00, acc = 0x00, xReg = 0x00, yReg = 0x00, zFlag = 0x0, step = 0x0, brkFlag = 0x0, state = "") {
+        constructor(pid, baseRegister, limitRegister, state, pc = 0x000, ir = 0x00, acc = 0x00, xReg = 0x00, yReg = 0x00, zFlag = 0x0, step = 0x0, brkFlag = 0x0) {
             this.pid = pid;
             this.baseRegister = baseRegister;
             this.limitRegister = limitRegister;
+            this.state = state;
             this.pc = pc;
             this.ir = ir;
             this.acc = acc;
@@ -13,8 +19,11 @@ var TSOS;
             this.zFlag = zFlag;
             this.step = step;
             this.brkFlag = brkFlag;
-            this.state = state;
         }
+        /**
+         * Saves all the data from the CPU into the PCB
+         * @param CPU
+         */
         saveContext(CPU) {
             this.pc = CPU.PC;
             this.ir = CPU.IR;
@@ -26,6 +35,10 @@ var TSOS;
             this.brkFlag = CPU.brkFlag;
             this.state = "Ready";
         }
+        /**
+         * Gives back the context to the CPU from the PCB
+         * @param CPU
+         */
         getContext(CPU) {
             CPU.PC = this.pc;
             CPU.IR = this.ir;

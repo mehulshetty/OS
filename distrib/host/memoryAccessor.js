@@ -1,3 +1,8 @@
+/* ------------
+   memoryAccessor.ts
+
+   This virtual memory accessor "reads" and "writes" into "memory".
+   ------------ */
 var TSOS;
 (function (TSOS) {
     class MemoryAccessor {
