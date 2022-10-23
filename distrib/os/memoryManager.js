@@ -6,7 +6,7 @@
 var TSOS;
 (function (TSOS) {
     class MemoryManager {
-        constructor(memoryAccessor = null, pid = 0, memoryMap = new Object(), executingPid = 0x0) {
+        constructor(memoryAccessor = null, pid = 0, memoryMap = { 0: -1, 1: -1, 2: -1 }, executingPid = 0x0) {
             this.memoryAccessor = memoryAccessor;
             this.pid = pid;
             this.memoryMap = memoryMap;
@@ -17,19 +17,37 @@ var TSOS;
          * @param loadDataArray the data to be stored in memory
          */
         store(loadDataArray) {
-            let currentAddress = this.memoryAccessor.getAddress();
-            this.memoryAccessor.setAddress(0 * 0x100);
-            for (let arrayElemNum = 0; arrayElemNum < 0x100; arrayElemNum++) {
-                _MemoryAccessor.writeImmediate(arrayElemNum, 0x00);
+            // Lets the user know if the program size is too large (greater than 256)
+            if (loadDataArray.length > 0x100) {
+                return "This program is too long to store in memory.";
             }
-            for (let arrayElemNum = 0; arrayElemNum < loadDataArray.length; arrayElemNum++) {
-                _MemoryAccessor.writeImmediate(arrayElemNum, parseInt(loadDataArray[arrayElemNum], 16));
-                console.log("INPUT");
+            // Checks the first location in memory that is available
+            let storeLoc = -2;
+            for (let i = 0; i < 3; i++) {
+                if (this.memoryMap[i] == 0) {
+                    storeLoc = i;
+                    break;
+                }
             }
-            this.memoryAccessor.setAddress(currentAddress);
-            // TODO: Implement an actual way to map PIDs to their location within memory
-            this.memoryMap[0] = this.pid;
-            return this.pid++;
+            // Checks if there is any location in memory that is available
+            if (storeLoc < -1) {
+                let currentAddress = this.memoryAccessor.getAddress();
+                this.memoryAccessor.setAddress(storeLoc * 0x100);
+                for (let arrayElemNum = 0; arrayElemNum < 0x100; arrayElemNum++) {
+                    _MemoryAccessor.writeImmediate(arrayElemNum, 0x00);
+                }
+                for (let arrayElemNum = 0; arrayElemNum < loadDataArray.length; arrayElemNum++) {
+                    _MemoryAccessor.writeImmediate(arrayElemNum, parseInt(loadDataArray[arrayElemNum], 16));
+                    console.log("INPUT");
+                }
+                this.memoryAccessor.setAddress(currentAddress);
+                // TODO: Implement an actual way to map PIDs to their location within memory
+                this.memoryMap[storeLoc] = this.pid;
+                return "Process " + (this.pid++).toString() + " created.";
+            }
+            else {
+                return "All memory locations are full. Clear memory before loading another program.";
+            }
         }
         /**
          * Begins executing a program in the CPU
