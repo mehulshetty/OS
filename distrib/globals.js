@@ -21,6 +21,11 @@ const KEYBOARD_IRQ = 1;
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 let _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+let _Memory;
+let _MemoryAccessor;
+let _MemoryManager;
+let _CPUScheduler;
+let _CPUDispatcher;
 let _OSClock = 0; // Page 23.
 let _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 let _Canvas; // Initialized in Control.hostInit().
@@ -45,6 +50,9 @@ let _SarcasticMode = false;
 // Global Device Driver Objects - page 12
 let _krnKeyboardDriver = null;
 let _hardwareClockID = null;
+let isCtrl = false;
+let residentList = [];
+let readyQueue = [];
 // For testing (and enrichment)...
 var Glados = null; // This is the function Glados() in glados-ip*.js http://alanclasses.github.io/TSOS/test/ .
 var _GLaDOS = null; // If the above is linked in, this is the instantiated instance of Glados.

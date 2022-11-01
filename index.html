@@ -3,10 +3,14 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
    <meta name="author"             content="Alan G. Labouseur" />
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+   <script src="https://kit.fontawesome.com/b05fe92938.js" crossorigin="anonymous"></script>
    <link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
    <title>
-      TSOS - a browser-based virtual Operating System in TypeScript
+      zerOS
    </title>
+   <link rel="icon" type="image/x-icon" href="source/os/images/zeroFavicon.png"/>
 
    <!-- Globals CONSTANTS and _Variables. Must included be first. -->
    <script type="text/javascript" src="distrib/globals.js"></script>
@@ -15,6 +19,8 @@
    <script type="text/javascript" src="distrib/host/control.js"></script>
    <script type="text/javascript" src="distrib/host/devices.js"></script>
    <script type="text/javascript" src="distrib/host/cpu.js"></script>
+   <script type="text/javascript" src="distrib/host/memory.js"></script>
+   <script type="text/javascript" src="distrib/host/memoryAccessor.js"></script>
 
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="distrib/os/interrupt.js"></script>
@@ -27,52 +33,82 @@
    <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
    <script type="text/javascript" src="distrib/os/userCommand.js"></script>
    <script type="text/javascript" src="distrib/os/kernel.js"></script>
+   <script type="text/javascript" src="distrib/os/memoryManager.js"></script>
+   <script type="text/javascript" src="distrib/os/pcb.js"></script>
+   <script type="text/javascript" src="distrib/os/cpuScheduler.js"></script>
+   <script type="text/javascript" src="distrib/os/cpuDispatcher.js"></script>
 
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment the line below to enable GLaDOS testing. -->
-   <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip0.js"></script>
-   
+   <!-- <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip3.js"></script> -->
+
 </head>
 
 <body onload="onDocumentLoad()">
 
 <div id="divMain" style="width:100%;">
 
-   <div id="divButtonBar" style="margin:4px;">
-      <input type="button"
-             id = "btnStartOS"
-             name="brnStartOS"
-             class="normal_button"
-             value="Start"
-             tabindex="0"
-             onclick="TSOS.Control.hostBtnStartOS_click(this);">
+   <nav class="navbar navbar-dark bg-dark">
+      <div class="btn-group">
+         <button class="btn btn-outline-success"
+                 id="btnStartOS"
+                 name="brnStartOS"
+                 value="Start"
+                 tabindex="0"
+                 onclick="TSOS.Control.hostBtnStartOS_click(this);"
+         >
+            <i class="fa-regular fa-play"></i>
+         </button>
+         <button
+                 id = "btnHaltOS"
+                 name="brnHaltOS"
+                 class="btn btn-outline-warning"
+                 disabled="disabled"
+                 value="Halt"
+                 tabindex="1"
+                 onclick="TSOS.Control.hostBtnHaltOS_click(this);"
+                 style="display: none;">
+            <i class="fa-regular fa-pause"></i>
+         </button>
 
-      <input type="button"
-             id = "btnHaltOS"
-             name="brnHaltOS"
-             class="normal_button"
-             disabled="disabled"
-             value="Halt"
-             tabindex="1"
-             onclick="TSOS.Control.hostBtnHaltOS_click(this);">
-
-      <input type="button"
-             id = "btnReset"
-             name="brnReset"
-             class="normal_button"
-             disabled="disabled"
-             value="Restart"
-             tabindex="2"
-             onclick="TSOS.Control.hostBtnReset_click(this);">
-
+         <button type="button"
+                 id = "btnReset"
+                 name="brnReset"
+                 class="btn btn-outline-danger"
+                 disabled="disabled"
+                 value="Restart"
+                 tabindex="2"
+                 onclick="TSOS.Control.hostBtnReset_click(this);">
+            <i class="fa-regular fa-rotate-right"></i>
+         </button>
+      </div>
+      <div class="btn-group">
+         <button type = "button"
+                 class ="btn btn-success"
+                 id = "btnSingleStep"
+                 value = "Start"
+                 disabled = "disabled"
+                 onclick = "TSOS.Control.hostSingleStep(this);"
+         >
+            Start Single Step
+         </button>
+         <button type = "button"
+                 class = "btn btn-light"
+                 id = "btnNextStep"
+                 value = "Next"
+                 disabled = "disabled"
+                 onclick = "TSOS.Control.hostNextStep();">
+            <i class="fa-solid fa-angle-right"></i>
+         </button>
+      </div>
       <h1>zerOS</h1>
-
       <input type="text"
              id = "currentDateAndTime"
+             style = "height: 40px;"
              readonly>
+   </nav>
 
-   </div>
    <div>
       <div id="divConsole" style="margin:4px; width: 900px; height:650px; float:left;">
          <canvas id="display"
@@ -82,27 +118,88 @@
                  style="border-radius: 15px;">
          </canvas>
       </div>
-      <div style="padding-left: 400px">
-         <div id="divLog" style="margin-left:520px;">
-            <label>
-               Host Log
-               <br>
-               <textarea name="taHostLog"
-                         id  ="taHostLog"
-                         rows="30"
-                         cols="68"
-               ></textarea>
-            </label>
+      <div style="padding-left: 10px; height: 650px; overflow-y: scroll;" >
+         <br>
+         <div>
+            <table class="table table-dark">
+               <thead class="thead-dark">
+               <tr>
+                  <th scope="col">PC</th>
+                  <th scope="col">IR</th>
+                  <th scope="col">ACC</th>
+                  <th scope="col">XReg</th>
+                  <th scope="col">YReg</th>
+                  <th scope="col">ZFlag</th>
+               </tr>
+               </thead>
+               <tbody>
+               <tr id="cpuViewRow">
+                  <td>0</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>0</td>
+                  <td>0</td>
+               </tr>
+               </tbody>
+            </table>
          </div>
-
-         <div id="divUserProgramInput" style="margin-left:520px;">
+         <br>
+         <div style="overflow-y:scroll; max-height:200px;">
+            <table class="table table-dark">
+               <thead class="thead-dark">
+               <tr>
+                  <th>Memory View</th>
+               </tr>
+               </thead>
+               <tbody id="memoryViewBody">
+               </tbody>
+            </table>
+         </div>
+         <br>
+         <div style="overflow-y:scroll; max-height:200px;">
+            <table class="table table-dark rounded-10">
+               <thead class="thead-dark">
+               <tr>
+                  <th>Processes</th>
+               </tr>
+               <tr>
+                  <th scope="col">PID</th>
+                  <th scope="col">PC</th>
+                  <th scope="col">IR</th>
+                  <th scope="col">ACC</th>
+                  <th scope="col">X</th>
+                  <th scope="col">Y</th>
+                  <th scope="col">Z</th>
+                  <th scope=""col>Status</th>
+               </tr>
+               </thead>
+               <tbody id="processViewBody">
+               </tbody>
+            </table>
+         </div>
+         <div id="divUserProgramInput">
             <label>
                User Program Input
                <br>
                <textarea name="taProgramInput"
                          id  ="taProgramInput"
-                         rows="13"
-                         cols="68"
+                         rows="10"
+                         cols="100"
+                         class="bg-dark text-white"
+               >A9 03 8D 41 00 A9 01 8D 40 00 AC 40 00 A2 01 FF EE 40 00 AE 40 00 EC 41 00 D0 EF A9 44 8D 42 00 A9 4F 8D 43 00 A9 4E 8D 44 00 A9 45 8D 45 00 A9 00 8D 46 00 A2 02 A0 42 FF 00</textarea>
+            </label>
+         </div>
+         <div id="divLog">
+            <label>
+               Host Log
+               <br>
+               <textarea name="taHostLog"
+                         id  ="taHostLog"
+                         rows="10"
+                         cols="100"
+                         class="bg-dark text-white"
+                         readonly
                ></textarea>
             </label>
          </div>
@@ -111,11 +208,12 @@
 </div>
 
 <br>
-
-<div>
+<br>
+<div style="margin-top: 20px;">
    <input type="text"
           id = "status"
           value="STATUS:"
+          style = "height: 30px;"
           readonly>
 </div>
 

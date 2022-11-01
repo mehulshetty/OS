@@ -141,8 +141,6 @@ module TSOS {
                                      _FontHeightMargin;
             this.currentYPosition += incrementYPosition;
 
-            console.log(this.currentYPosition);
-
             // Handles Scrolling
             if (this.currentYPosition >= 650) {
 

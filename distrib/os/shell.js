@@ -40,40 +40,59 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellCls, "cls", "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
             // man <topic>
-            sc = new TSOS.ShellCommand(this.shellMan, "man", "<topic> - Displays the MANual page for <topic>.");
+            sc = new TSOS.ShellCommand(this.shellMan, "man", "- <topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
             // date
-            sc = new TSOS.ShellCommand(this.shellDate, "date", "Displays the current date.");
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date.");
             this.commandList[this.commandList.length] = sc;
             // whereami
-            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "Shows you where you are.");
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Shows you where you are.");
             this.commandList[this.commandList.length] = sc;
             // gokitty
-            sc = new TSOS.ShellCommand(this.shellGoKitty, "gokitty", "Run Kitty Run! Run away from this OS!");
+            sc = new TSOS.ShellCommand(this.shellGoKitty, "gokitty", "- Run Kitty Run! Run away from this OS!");
             this.commandList[this.commandList.length] = sc;
             // hey <name>
-            sc = new TSOS.ShellCommand(this.shellHey, "hey", "<name> - The name you want to say hi to.");
+            sc = new TSOS.ShellCommand(this.shellHey, "hey", "- <name> - The name you want to say hi to.");
             this.commandList[this.commandList.length] = sc;
             // trace <on | off>
-            sc = new TSOS.ShellCommand(this.shellTrace, "trace", "<on | off> - Turns the OS trace on or off.");
+            sc = new TSOS.ShellCommand(this.shellTrace, "trace", "- <on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
             // rot13 <string>
-            sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "<string> - Does rot13 obfuscation on <string>.");
+            sc = new TSOS.ShellCommand(this.shellRot13, "rot13", "- <string> - Does rot13 obfuscation on <string>.");
             this.commandList[this.commandList.length] = sc;
             // prompt <string>
-            sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
+            sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "- <string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
             // status <string>
-            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Sets the status message.");
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "- <string> - Sets the status message.");
             this.commandList[this.commandList.length] = sc;
             // load
-            sc = new TSOS.ShellCommand(this.shellLoad, "load", "Loads the user input and checks if it is valid HEX.");
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Loads the user input and checks if it is valid HEX.");
             this.commandList[this.commandList.length] = sc;
             // bsod
-            sc = new TSOS.ShellCommand(this.shellBsod, "bsod", "Displays the blue screen of death.");
+            sc = new TSOS.ShellCommand(this.shellBsod, "bsod", "- Displays the blue screen of death.");
             this.commandList[this.commandList.length] = sc;
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+            // bsod
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "- <pid> - Runs a program from memory.");
+            this.commandList[this.commandList.length] = sc;
+            // run all
+            sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "- Runs all programs in memory.");
+            this.commandList[this.commandList.length] = sc;
+            // quantum
+            sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "- <int> Sets the quantum for round-robin.");
+            this.commandList[this.commandList.length] = sc;
+            // clearmem
+            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- Clears all memory partitions.");
+            this.commandList[this.commandList.length] = sc;
+            // ps
+            sc = new TSOS.ShellCommand(this.shellPS, "ps", "- Displays the PID and state of all processes.");
+            this.commandList[this.commandList.length] = sc;
+            // kill
+            sc = new TSOS.ShellCommand(this.shellKill, "kill", "- <id> - Kills the specified process id.");
+            this.commandList[this.commandList.length] = sc;
+            // killall
+            sc = new TSOS.ShellCommand(this.shellKillAll, "quantum", "- Kills all processes.");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -95,7 +114,7 @@ var TSOS;
             // Determine the command and execute it.
             //
             // TypeScript/JavaScript may not support associative arrays in all browsers so we have to iterate over the
-            // command list in attempt to find a match. 
+            // command list in attempt to find a match.
             // TODO: Is there a better way? Probably. Someone work it out and tell me in class.
             let index = 0;
             let found = false;
@@ -195,7 +214,6 @@ var TSOS;
             let tempList = buffer.split(" ");
             if (!buffer.toLowerCase().startsWith("status")) {
                 // 2. Lower-case it.
-                console.log("HERE");
                 for (let itemNum = 0; itemNum < tempList.length; itemNum++) {
                     tempList[itemNum] = tempList[itemNum].toLowerCase();
                 }
@@ -250,7 +268,7 @@ var TSOS;
                 _StdOut.putText("For what?");
             }
         }
-        // Although args is unused in some of these functions, it is always provided in the 
+        // Although args is unused in some of these functions, it is always provided in the
         // actual parameter list when this function is called, so I feel like we need it.
         shellVer(args) {
             _StdOut.putText(APP_NAME + " version " + APP_VERSION);
@@ -319,7 +337,6 @@ var TSOS;
             _StdOut.putText(placesYouAre[Math.floor(Math.random() * 11)]);
         }
         shellGoKitty() {
-            console.log("HERE");
             let catImage = new Image();
             let catPosition = 0;
             catImage.src = "source/os/images/kittyImage.png";
@@ -415,7 +432,11 @@ var TSOS;
                     }
                 }
                 if (isValid) {
-                    _StdOut.putText("The input user code is VALID.");
+                    // _StdOut.putText("The input user code is VALID.");
+                    let loadDataArray = loadData.match(/.{1,2}/g);
+                    // Creates a new process and pushes it onto the ready queue
+                    let pidString = _MemoryManager.store(loadDataArray);
+                    _StdOut.putText(pidString);
                 }
                 else {
                     _StdOut.putText("The input user code is INVALID.");
@@ -425,8 +446,40 @@ var TSOS;
                 _StdOut.putText("Usage: prompt <load>  Please load some user code.");
             }
         }
-        shellBsod() {
-            _Kernel.krnTrapError("BSOD Called");
+        shellRun(args) {
+            if (args.length > 0) {
+                let commandPid = args[0];
+                _MemoryManager.run(parseInt(commandPid));
+            }
+        }
+        shellBsod(args) {
+            if (args.length > 0) {
+                _Kernel.krnTrapError(args.join(' '));
+            }
+            else {
+                _Kernel.krnTrapError("UNKNOWN_ERROR.EXE was run. Please restart the system.");
+            }
+        }
+        shellRunAll() {
+            while (residentList.length != 0) {
+                _MemoryManager.run(residentList[0].pid);
+            }
+        }
+        shellQuantum(args) {
+            if (args.length > 0) {
+                let newQuantum = parseInt(args[0]);
+                _CPUScheduler.quantum = newQuantum;
+            }
+        }
+        shellClearMem() {
+            _Memory.reset();
+        }
+        shellKill(args) {
+        }
+        shellKillAll() {
+            readyQueue = [];
+        }
+        shellPS() {
         }
     }
     TSOS.Shell = Shell;

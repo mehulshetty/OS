@@ -62,14 +62,29 @@ var TSOS;
         static hostBtnStartOS_click(btn) {
             // Disable the (passed-in) start button...
             btn.disabled = true;
-            // .. enable the Halt and Reset buttons ...
+            // .. enable the Halt, Reset, and Single Step buttons ...
             document.getElementById("btnHaltOS").disabled = false;
             document.getElementById("btnReset").disabled = false;
+            document.getElementById("btnSingleStep").disabled = false;
+            document.getElementById("btnHaltOS").style.display = "block";
+            document.getElementById("btnStartOS").style.display = "none";
             // .. set focus on the OS console display ...
             document.getElementById("display").focus();
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
             _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            _Memory = new TSOS.Memory();
+            _Memory.init();
+            _MemoryAccessor = new TSOS.MemoryAccessor(0x000, 0x00, _Memory);
+            _CPU.connectMemoryAccessor();
+            _MemoryManager = new TSOS.MemoryManager(_MemoryAccessor);
+            _CPUScheduler = new TSOS.CpuScheduler();
+            _CPUDispatcher = new TSOS.CpuDispatcher();
+            setInterval(() => {
+                this.updateCpuViewRow();
+                this.updateMemoryViewBody();
+                this.updateProcessViewBody();
+            }, 100);
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -83,6 +98,11 @@ var TSOS;
             _Kernel.krnShutdown();
             // Stop the interval that's simulating our clock pulse.
             clearInterval(_hardwareClockID);
+            document.getElementById("btnSingleStep").disabled = true;
+            document.getElementById("btnSingleStep").value = "Start";
+            document.getElementById("btnNextStep").disabled = true;
+            document.getElementById("btnSingleStep").innerText = "Start Single Step";
+            document.getElementById("btnSingleStep").className = "btn btn-success";
             // TODO: Is there anything else we need to do here?
         }
         static hostBtnReset_click(btn) {
@@ -96,6 +116,68 @@ var TSOS;
             let dateAndTimeObject = document.getElementById("currentDateAndTime");
             let updatedDateAndTime = new Date();
             dateAndTimeObject.value = updatedDateAndTime.toUTCString();
+        }
+        static updateCpuViewRow() {
+            let updatedHtmlText = "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>"
+                + "<td>" + _CPU.IR.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.acc.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.xReg.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.yReg.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.zFlag.toString(16) + "</td>";
+            document.getElementById("cpuViewRow").innerHTML = updatedHtmlText;
+            console.log("PID: ", _MemoryManager.executingPid, " | PC: ", _CPU.PC.toString(16).padStart(3, '0'), " | IR: ", _CPU.IR.toString(16).padStart(2, '0'), " | ACC: ", _CPU.acc.toString(16).padStart(2, '0'), " | X: ", _CPU.xReg.toString(16).padStart(2, '0'), " | Y: ", _CPU.yReg.toString(16).padStart(2, '0'), " | Z: ", _CPU.zFlag);
+        }
+        static updateMemoryViewBody() {
+            let updatedHtmlText = "";
+            for (let rowStart = 0x000; rowStart < 0x300; rowStart += 0x08) {
+                updatedHtmlText += "<tr><th>0x" + rowStart.toString(16).padStart(3, '0') + "</th>";
+                for (let i = 0x0; i < 0x8; i++) {
+                    updatedHtmlText += "<td>" + _Memory.storage[rowStart + i].toString(16).padStart(2, '0')
+                        + "</td>";
+                }
+                updatedHtmlText += "</tr>";
+            }
+            document.getElementById("memoryViewBody").innerHTML = updatedHtmlText;
+        }
+        static updateProcessViewBody() {
+            let updatedHtmlText = "";
+            if (_CPU.isExecuting) {
+                for (let blockRow = 0x0; blockRow < readyQueue.length; blockRow++) {
+                    let block = readyQueue[blockRow];
+                    updatedHtmlText += "<tr><th>" + block.pid + "</th>";
+                    updatedHtmlText += "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>";
+                    updatedHtmlText += "<td>" + _CPU.IR.toString(16).padStart(3, '0') + "</td>";
+                    updatedHtmlText += "<td>" + _CPU.acc.toString(16).padStart(3, '0') + "</td>";
+                    updatedHtmlText += "<td>" + _CPU.xReg.toString(16).padStart(3, '0') + "</td>";
+                    updatedHtmlText += "<td>" + _CPU.yReg.toString(16).padStart(3, '0') + "</td>";
+                    updatedHtmlText += "<td>" + _CPU.zFlag.toString(16).padStart(3, '0') + "</td>";
+                    updatedHtmlText += "<td>" + block.state + "</td>";
+                    updatedHtmlText += "</tr>";
+                }
+            }
+            document.getElementById("processViewBody").innerHTML = updatedHtmlText;
+        }
+        static hostSingleStep(btn) {
+            let btnValue = document.getElementById("btnSingleStep").value;
+            // Code runs when starting Single Step
+            if (btnValue == "Start") {
+                document.getElementById("btnSingleStep").value = "Stop";
+                document.getElementById("btnNextStep").disabled = false;
+                clearInterval(_hardwareClockID);
+                document.getElementById("btnSingleStep").innerText = "Stop Single Step";
+                document.getElementById("btnSingleStep").className = "btn btn-danger";
+            }
+            // Code runs when stopping Single Step
+            else {
+                document.getElementById("btnSingleStep").value = "Start";
+                document.getElementById("btnNextStep").disabled = true;
+                _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
+                document.getElementById("btnSingleStep").innerText = "Start Single Step";
+                document.getElementById("btnSingleStep").className = "btn btn-success";
+            }
+        }
+        static hostNextStep() {
+            TSOS.Devices.hostClockPulse();
         }
     }
     TSOS.Control = Control;
