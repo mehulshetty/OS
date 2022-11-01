@@ -6,7 +6,7 @@
 var TSOS;
 (function (TSOS) {
     class PCB {
-        constructor(pid, baseRegister, limitRegister, state, pc = 0x000, ir = 0x00, acc = 0x00, xReg = 0x00, yReg = 0x00, zFlag = 0x0, step = 0x0, brkFlag = 0x0) {
+        constructor(pid, baseRegister, limitRegister, state, pc = 0x000, ir = 0x00, acc = 0x00, xReg = 0x00, yReg = 0x00, zFlag = 0x0, step = 0x0, brkFlag = 0x0, carryFlag = 0x0) {
             this.pid = pid;
             this.baseRegister = baseRegister;
             this.limitRegister = limitRegister;
@@ -19,6 +19,7 @@ var TSOS;
             this.zFlag = zFlag;
             this.step = step;
             this.brkFlag = brkFlag;
+            this.carryFlag = carryFlag;
         }
         /**
          * Saves all the data from the CPU into the PCB
@@ -33,7 +34,8 @@ var TSOS;
             this.zFlag = CPU.zFlag;
             this.step = CPU.step;
             this.brkFlag = CPU.brkFlag;
-            this.state = "Ready";
+            this.carryFlag = CPU.carryFlag;
+            this.state = "Running";
         }
         /**
          * Gives back the context to the CPU from the PCB
@@ -48,6 +50,7 @@ var TSOS;
             CPU.zFlag = this.zFlag;
             CPU.step = this.step;
             CPU.brkFlag = this.brkFlag;
+            CPU.carryFlag = this.carryFlag;
             this.state = "Running";
         }
     }

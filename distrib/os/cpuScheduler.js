@@ -24,6 +24,9 @@ var TSOS;
                     break;
             }
         }
+        start() {
+            _CPUDispatcher.startRunning();
+        }
     }
     TSOS.CpuScheduler = CpuScheduler;
 })(TSOS || (TSOS = {}));

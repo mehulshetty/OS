@@ -67,5 +67,11 @@ module TSOS {
             this.setAddress(this.getLowOrderByte() + (hob * 0x100));
         }
 
+        getBaseValue(): number {
+            if(readyQueue.length != 0) {
+                return readyQueue[0].baseRegister;
+            }
+        }
+
     }
 }

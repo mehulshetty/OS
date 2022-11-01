@@ -59,6 +59,11 @@ var TSOS;
         setHighOrderByte(hob) {
             this.setAddress(this.getLowOrderByte() + (hob * 0x100));
         }
+        getBaseValue() {
+            if (readyQueue.length != 0) {
+                return readyQueue[0].baseRegister;
+            }
+        }
     }
     TSOS.MemoryAccessor = MemoryAccessor;
 })(TSOS || (TSOS = {}));

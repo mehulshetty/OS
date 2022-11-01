@@ -24,36 +24,36 @@ module TSOS {
             }
 
             // Checks the first location in memory that is available
-            let storeLoc: number = -2
+            let storeLoc: number = -1
             for (let i = 0; i < 3; i++) {
-                if (this.memoryMap[i] == 0) {
+                if (this.memoryMap[i] == -1) {
                     storeLoc = i;
                     break;
                 }
             }
 
             // Checks if there is any location in memory that is available
-            if (storeLoc < -1) {
-                let currentAddress = this.memoryAccessor.getAddress();
+            if (storeLoc > -1) {
 
-                this.memoryAccessor.setAddress(storeLoc * 0x100);
-
+                // Rewrites the memory block with all zeros
                 for (let arrayElemNum = 0; arrayElemNum < 0x100; arrayElemNum++) {
-                    _MemoryAccessor.writeImmediate(arrayElemNum, 0x00);
+                    _MemoryAccessor.writeImmediate(storeLoc * 0x100 + arrayElemNum, 0x00);
                 }
 
+                // Writes the input data in memory
                 for (let arrayElemNum = 0; arrayElemNum < loadDataArray.length; arrayElemNum++) {
-                    _MemoryAccessor.writeImmediate(arrayElemNum, parseInt(loadDataArray[arrayElemNum], 16));
+                    _MemoryAccessor.writeImmediate(storeLoc * 0x100 + arrayElemNum, parseInt(loadDataArray[arrayElemNum], 16));
                     console.log("INPUT");
                 }
-                this.memoryAccessor.setAddress(currentAddress);
 
                 // TODO: Implement an actual way to map PIDs to their location within memory
                 this.memoryMap[storeLoc] = this.pid;
 
+                residentList.push(new PCB(
+                    this.pid, storeLoc * 0x100, (storeLoc * 0x100) + 0x100, "Resident", storeLoc * 0x100));
+
                 return "Process " + (this.pid++).toString() + " created.";
-            }
-            else {
+            } else {
                 return "All memory locations are full. Clear memory before loading another program."
             }
         }
@@ -63,10 +63,29 @@ module TSOS {
          * @param commandPid the pid of the command to be executed
          */
         public run (commandPid: number) {
-            this.executingPid = commandPid;
+            /**
+             // Sets the pID for the process that is being executed
+             this.executingPid = commandPid;
 
-            _CPU.isExecuting = true;
-            _CPU.PC = 0x00;
+             // Gets the memory location for the process to be executed
+             let executeMemoryLocation =
+             Object.keys(this.memoryMap).find(key => this.memoryMap[key] == this.executingPid);
+
+             _CPU.isExecuting = true;
+             _CPU.PC = parseInt(executeMemoryLocation) * 0x100;
+             */
+
+            for(let processNum = 0; processNum < residentList.length; processNum++) {
+                if (residentList[processNum].pid == commandPid) {
+                    readyQueue.push(residentList[processNum]);
+                    residentList.splice(processNum, 1);
+                }
+            }
+
+            if (_CPU.isExecuting == false) {
+                _CPUScheduler.start();
+                _CPU.isExecuting = true;
+            }
         }
     }
 }

@@ -75,8 +75,24 @@ var TSOS;
             // bsod
             sc = new TSOS.ShellCommand(this.shellRun, "run", "- <pid> - Runs a program from memory.");
             this.commandList[this.commandList.length] = sc;
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+            // run all
+            sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "- Runs all programs in memory.");
+            this.commandList[this.commandList.length] = sc;
+            // quantum
+            sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "- <int> Sets the quantum for round-robin.");
+            this.commandList[this.commandList.length] = sc;
+            // clearmem
+            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- Clears all memory partitions.");
+            this.commandList[this.commandList.length] = sc;
+            // ps
+            sc = new TSOS.ShellCommand(this.shellPS, "ps", "- Displays the PID and state of all processes.");
+            this.commandList[this.commandList.length] = sc;
+            // kill
+            sc = new TSOS.ShellCommand(this.shellKill, "kill", "- <id> - Kills the specified process id.");
+            this.commandList[this.commandList.length] = sc;
+            // killall
+            sc = new TSOS.ShellCommand(this.shellKillAll, "quantum", "- Kills all processes.");
+            this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -98,7 +114,7 @@ var TSOS;
             // Determine the command and execute it.
             //
             // TypeScript/JavaScript may not support associative arrays in all browsers so we have to iterate over the
-            // command list in attempt to find a match. 
+            // command list in attempt to find a match.
             // TODO: Is there a better way? Probably. Someone work it out and tell me in class.
             let index = 0;
             let found = false;
@@ -252,7 +268,7 @@ var TSOS;
                 _StdOut.putText("For what?");
             }
         }
-        // Although args is unused in some of these functions, it is always provided in the 
+        // Although args is unused in some of these functions, it is always provided in the
         // actual parameter list when this function is called, so I feel like we need it.
         shellVer(args) {
             _StdOut.putText(APP_NAME + " version " + APP_VERSION);
@@ -420,8 +436,6 @@ var TSOS;
                     let loadDataArray = loadData.match(/.{1,2}/g);
                     // Creates a new process and pushes it onto the ready queue
                     let pidString = _MemoryManager.store(loadDataArray);
-                    let newPid = _MemoryManager.pid - 1;
-                    readyQueue.push(new TSOS.PCB(newPid, 0x000, 0x100, "Ready"));
                     _StdOut.putText(pidString);
                 }
                 else {
@@ -445,6 +459,27 @@ var TSOS;
             else {
                 _Kernel.krnTrapError("UNKNOWN_ERROR.EXE was run. Please restart the system.");
             }
+        }
+        shellRunAll() {
+            while (residentList.length != 0) {
+                _MemoryManager.run(residentList[0].pid);
+            }
+        }
+        shellQuantum(args) {
+            if (args.length > 0) {
+                let newQuantum = parseInt(args[0]);
+                _CPUScheduler.quantum = newQuantum;
+            }
+        }
+        shellClearMem() {
+            _Memory.reset();
+        }
+        shellKill(args) {
+        }
+        shellKillAll() {
+            readyQueue = [];
+        }
+        shellPS() {
         }
     }
     TSOS.Shell = Shell;

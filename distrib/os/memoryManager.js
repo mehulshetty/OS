@@ -22,27 +22,27 @@ var TSOS;
                 return "This program is too long to store in memory.";
             }
             // Checks the first location in memory that is available
-            let storeLoc = -2;
+            let storeLoc = -1;
             for (let i = 0; i < 3; i++) {
-                if (this.memoryMap[i] == 0) {
+                if (this.memoryMap[i] == -1) {
                     storeLoc = i;
                     break;
                 }
             }
             // Checks if there is any location in memory that is available
-            if (storeLoc < -1) {
-                let currentAddress = this.memoryAccessor.getAddress();
-                this.memoryAccessor.setAddress(storeLoc * 0x100);
+            if (storeLoc > -1) {
+                // Rewrites the memory block with all zeros
                 for (let arrayElemNum = 0; arrayElemNum < 0x100; arrayElemNum++) {
-                    _MemoryAccessor.writeImmediate(arrayElemNum, 0x00);
+                    _MemoryAccessor.writeImmediate(storeLoc * 0x100 + arrayElemNum, 0x00);
                 }
+                // Writes the input data in memory
                 for (let arrayElemNum = 0; arrayElemNum < loadDataArray.length; arrayElemNum++) {
-                    _MemoryAccessor.writeImmediate(arrayElemNum, parseInt(loadDataArray[arrayElemNum], 16));
+                    _MemoryAccessor.writeImmediate(storeLoc * 0x100 + arrayElemNum, parseInt(loadDataArray[arrayElemNum], 16));
                     console.log("INPUT");
                 }
-                this.memoryAccessor.setAddress(currentAddress);
                 // TODO: Implement an actual way to map PIDs to their location within memory
                 this.memoryMap[storeLoc] = this.pid;
+                residentList.push(new TSOS.PCB(this.pid, storeLoc * 0x100, (storeLoc * 0x100) + 0x100, "Resident", storeLoc * 0x100));
                 return "Process " + (this.pid++).toString() + " created.";
             }
             else {
@@ -54,9 +54,27 @@ var TSOS;
          * @param commandPid the pid of the command to be executed
          */
         run(commandPid) {
-            this.executingPid = commandPid;
-            _CPU.isExecuting = true;
-            _CPU.PC = 0x00;
+            /**
+             // Sets the pID for the process that is being executed
+             this.executingPid = commandPid;
+
+             // Gets the memory location for the process to be executed
+             let executeMemoryLocation =
+             Object.keys(this.memoryMap).find(key => this.memoryMap[key] == this.executingPid);
+
+             _CPU.isExecuting = true;
+             _CPU.PC = parseInt(executeMemoryLocation) * 0x100;
+             */
+            for (let processNum = 0; processNum < residentList.length; processNum++) {
+                if (residentList[processNum].pid == commandPid) {
+                    readyQueue.push(residentList[processNum]);
+                    residentList.splice(processNum, 1);
+                }
+            }
+            if (_CPU.isExecuting == false) {
+                _CPUScheduler.start();
+                _CPU.isExecuting = true;
+            }
         }
     }
     TSOS.MemoryManager = MemoryManager;

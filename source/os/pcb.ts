@@ -18,7 +18,8 @@ module TSOS {
                     public zFlag: number = 0x0,
                     public step: number = 0x0,
                     public brkFlag: number = 0x0,
-                    ) {
+                    private carryFlag: number = 0x0,
+        ) {
         }
 
         /**
@@ -34,7 +35,8 @@ module TSOS {
             this.zFlag = CPU.zFlag;
             this.step = CPU.step;
             this.brkFlag = CPU.brkFlag;
-            this.state = "Ready";
+            this.carryFlag = CPU.carryFlag;
+            this.state = "Running";
         }
 
         /**
@@ -50,6 +52,7 @@ module TSOS {
             CPU.zFlag = this.zFlag;
             CPU.step = this.step;
             CPU.brkFlag = this.brkFlag;
+            CPU.carryFlag = this.carryFlag;
             this.state = "Running";
         }
     }

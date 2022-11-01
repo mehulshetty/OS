@@ -102,6 +102,9 @@ module TSOS {
 
             _MemoryManager = new MemoryManager(_MemoryAccessor);
 
+            _CPUScheduler = new CpuScheduler();
+            _CPUDispatcher = new CpuDispatcher();
+
             setInterval(() => {
                 this.updateCpuViewRow();
                 this.updateMemoryViewBody();
@@ -147,15 +150,16 @@ module TSOS {
         public static updateCpuViewRow(): void {
 
             let updatedHtmlText = "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>"
-                                + "<td>" + _CPU.IR.toString(16).padStart(2, '0') + "</td>"
-                                + "<td>" + _CPU.acc.toString(16).padStart(2, '0') + "</td>"
-                                + "<td>" + _CPU.xReg.toString(16).padStart(2, '0') + "</td>"
-                                + "<td>" + _CPU.yReg.toString(16).padStart(2, '0') + "</td>"
-                                + "<td>" + _CPU.zFlag.toString(16) + "</td>";
+                + "<td>" + _CPU.IR.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.acc.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.xReg.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.yReg.toString(16).padStart(2, '0') + "</td>"
+                + "<td>" + _CPU.zFlag.toString(16) + "</td>";
 
             document.getElementById("cpuViewRow").innerHTML = updatedHtmlText;
 
-            console.log("PC: ", _CPU.PC.toString(16).padStart(3, '0'),
+            console.log("PID: ", _MemoryManager.executingPid,
+                " | PC: ", _CPU.PC.toString(16).padStart(3, '0'),
                 " | IR: ", _CPU.IR.toString(16).padStart(2, '0'),
                 " | ACC: ", _CPU.acc.toString(16).padStart(2, '0'),
                 " | X: ", _CPU.xReg.toString(16).padStart(2, '0'),
@@ -185,8 +189,8 @@ module TSOS {
             let updatedHtmlText = "";
 
             if(_CPU.isExecuting) {
-                // for(let blockRow = 0x0; blockRow < readyQueue.length; blockRow++) {
-                    let block = readyQueue[_MemoryManager.executingPid];
+                for(let blockRow = 0x0; blockRow < readyQueue.length; blockRow++) {
+                    let block = readyQueue[blockRow];
                     updatedHtmlText += "<tr><th>" + block.pid + "</th>";
                     updatedHtmlText += "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>";
                     updatedHtmlText += "<td>" + _CPU.IR.toString(16).padStart(3, '0') + "</td>";
@@ -196,7 +200,7 @@ module TSOS {
                     updatedHtmlText += "<td>" + _CPU.zFlag.toString(16).padStart(3, '0') + "</td>";
                     updatedHtmlText += "<td>" + block.state + "</td>";
                     updatedHtmlText += "</tr>";
-                // }
+                }
             }
 
             document.getElementById("processViewBody").innerHTML = updatedHtmlText;

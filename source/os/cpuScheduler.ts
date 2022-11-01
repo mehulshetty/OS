@@ -23,5 +23,9 @@ module TSOS {
                     break;
             }
         }
+
+        public start() {
+            _CPUDispatcher.startRunning();
+        }
     }
 }

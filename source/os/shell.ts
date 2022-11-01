@@ -33,32 +33,32 @@ module TSOS {
 
             // ver
             sc = new ShellCommand(this.shellVer,
-                                  "ver",
-                                  "- Displays the current version data.");
+                "ver",
+                "- Displays the current version data.");
             this.commandList[this.commandList.length] = sc;
 
             // help
             sc = new ShellCommand(this.shellHelp,
-                                  "help",
-                                  "- This is the help command. Seek help.");
+                "help",
+                "- This is the help command. Seek help.");
             this.commandList[this.commandList.length] = sc;
 
             // shutdown
             sc = new ShellCommand(this.shellShutdown,
-                                  "shutdown",
-                                  "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+                "shutdown",
+                "- Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
             this.commandList[this.commandList.length] = sc;
 
             // cls
             sc = new ShellCommand(this.shellCls,
-                                  "cls",
-                                  "- Clears the screen and resets the cursor position.");
+                "cls",
+                "- Clears the screen and resets the cursor position.");
             this.commandList[this.commandList.length] = sc;
 
             // man <topic>
             sc = new ShellCommand(this.shellMan,
-                                  "man",
-                                  "- <topic> - Displays the MANual page for <topic>.");
+                "man",
+                "- <topic> - Displays the MANual page for <topic>.");
             this.commandList[this.commandList.length] = sc;
 
             // date
@@ -87,20 +87,20 @@ module TSOS {
 
             // trace <on | off>
             sc = new ShellCommand(this.shellTrace,
-                                  "trace",
-                                  "- <on | off> - Turns the OS trace on or off.");
+                "trace",
+                "- <on | off> - Turns the OS trace on or off.");
             this.commandList[this.commandList.length] = sc;
 
             // rot13 <string>
             sc = new ShellCommand(this.shellRot13,
-                                  "rot13",
-                                  "- <string> - Does rot13 obfuscation on <string>.");
+                "rot13",
+                "- <string> - Does rot13 obfuscation on <string>.");
             this.commandList[this.commandList.length] = sc;
 
             // prompt <string>
             sc = new ShellCommand(this.shellPrompt,
-                                  "prompt",
-                                  "- <string> - Sets the prompt.");
+                "prompt",
+                "- <string> - Sets the prompt.");
             this.commandList[this.commandList.length] = sc;
 
             // status <string>
@@ -127,8 +127,41 @@ module TSOS {
                 "- <pid> - Runs a program from memory.");
             this.commandList[this.commandList.length] = sc;
 
-            // ps  - list the running processes and their IDs
-            // kill <id> - kills the specified process id.
+            // run all
+            sc = new ShellCommand(this.shellRunAll,
+                "runall",
+                "- Runs all programs in memory.");
+            this.commandList[this.commandList.length] = sc;
+
+            // quantum
+            sc = new ShellCommand(this.shellQuantum,
+                "quantum",
+                "- <int> Sets the quantum for round-robin.");
+            this.commandList[this.commandList.length] = sc;
+
+            // clearmem
+            sc = new ShellCommand(this.shellClearMem,
+                "clearmem",
+                "- Clears all memory partitions.");
+            this.commandList[this.commandList.length] = sc;
+
+            // ps
+            sc = new ShellCommand(this.shellPS,
+                "ps",
+                "- Displays the PID and state of all processes.");
+            this.commandList[this.commandList.length] = sc;
+
+            // kill
+            sc = new ShellCommand(this.shellKill,
+                "kill",
+                "- <id> - Kills the specified process id.");
+            this.commandList[this.commandList.length] = sc;
+
+            // killall
+            sc = new ShellCommand(this.shellKillAll,
+                "quantum",
+                "- Kills all processes.");
+            this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
             this.putPrompt();
@@ -154,7 +187,7 @@ module TSOS {
             // Determine the command and execute it.
             //
             // TypeScript/JavaScript may not support associative arrays in all browsers so we have to iterate over the
-            // command list in attempt to find a match. 
+            // command list in attempt to find a match.
             // TODO: Is there a better way? Probably. Someone work it out and tell me in class.
             let index: number = 0;
             let found: boolean = false;
@@ -320,17 +353,17 @@ module TSOS {
         }
 
         public shellApology() {
-           if (_SarcasticMode) {
-              _StdOut.putText("I think we can put our differences behind us.");
-              _StdOut.advanceLine();
-              _StdOut.putText("For science . . . You monster.");
-              _SarcasticMode = false;
-           } else {
-              _StdOut.putText("For what?");
-           }
+            if (_SarcasticMode) {
+                _StdOut.putText("I think we can put our differences behind us.");
+                _StdOut.advanceLine();
+                _StdOut.putText("For science . . . You monster.");
+                _SarcasticMode = false;
+            } else {
+                _StdOut.putText("For what?");
+            }
         }
 
-        // Although args is unused in some of these functions, it is always provided in the 
+        // Although args is unused in some of these functions, it is always provided in the
         // actual parameter list when this function is called, so I feel like we need it.
 
         public shellVer(args: string[]) {
@@ -346,14 +379,14 @@ module TSOS {
         }
 
         public shellShutdown(args: string[]) {
-             _StdOut.putText("Shutting down...");
-             // Call Kernel shutdown routine.
+            _StdOut.putText("Shutting down...");
+            // Call Kernel shutdown routine.
             _Kernel.krnShutdown();
             // TODO: Stop the final prompt from being displayed. If possible. Not a high priority. (Damn OCD!)
         }
 
-        public shellCls(args: string[]) {         
-            _StdOut.clearScreen();     
+        public shellCls(args: string[]) {
+            _StdOut.clearScreen();
             _StdOut.resetXY();
         }
 
@@ -392,16 +425,16 @@ module TSOS {
 
         public shellWhereAmI() {
             let placesYouAre = ["Lost in the mall trying to find mom.",
-            "I'm right where you left me.",
-            "Past event horizon, into the black hole called zerOS.",
-            "In Beyonce's basement having dinner with the other inmates.",
-            "Es mejor si no sabes a dónde vamos.",
-            "In a Venetian beach, getting some radiant light.",
-            "The question isn't where are you, it's when are you.",
-            "YOU'RE FINALLY AWAKE!",
-            "Your coordinates are 53.98N and 78.98W. Oh wait, I'm looking at the wrong map.",
-            "!On ThE dIsCo FlOor!",
-            "I'm just as lost as you are mate."]
+                "I'm right where you left me.",
+                "Past event horizon, into the black hole called zerOS.",
+                "In Beyonce's basement having dinner with the other inmates.",
+                "Es mejor si no sabes a dónde vamos.",
+                "In a Venetian beach, getting some radiant light.",
+                "The question isn't where are you, it's when are you.",
+                "YOU'RE FINALLY AWAKE!",
+                "Your coordinates are 53.98N and 78.98W. Oh wait, I'm looking at the wrong map.",
+                "!On ThE dIsCo FlOor!",
+                "I'm just as lost as you are mate."]
             _StdOut.putText(placesYouAre[Math.floor(Math.random() * 11)]);
         }
 
@@ -487,7 +520,7 @@ module TSOS {
 
                 let newStatus = <HTMLInputElement>document.getElementById("status");
                 newStatus.value = "STATUS: " + statusDescription;
-                
+
             } else {
                 _StdOut.putText("Usage: status <string>  Please provide a status description.");
             }
@@ -519,9 +552,6 @@ module TSOS {
                     // Creates a new process and pushes it onto the ready queue
                     let pidString = _MemoryManager.store(loadDataArray);
 
-                    let newPid = _MemoryManager.pid - 1;
-                    readyQueue.push(new PCB(newPid, 0x000, 0x100, "Ready"));
-
                     _StdOut.putText(pidString);
                 }
                 else {
@@ -546,6 +576,35 @@ module TSOS {
             else {
                 _Kernel.krnTrapError("UNKNOWN_ERROR.EXE was run. Please restart the system.");
             }
+        }
+
+        public shellRunAll() {
+            while(residentList.length != 0) {
+                _MemoryManager.run(residentList[0].pid);
+            }
+        }
+
+        public shellQuantum(args: string[]) {
+            if (args.length > 0) {
+                let newQuantum = parseInt(args[0]);
+                _CPUScheduler.quantum = newQuantum;
+            }
+        }
+
+        public shellClearMem() {
+            _Memory.reset();
+        }
+
+        public shellKill(args: string[]) {
+
+        }
+
+        public shellKillAll() {
+            readyQueue = [];
+        }
+
+        public shellPS() {
+
         }
 
     }

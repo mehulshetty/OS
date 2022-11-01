@@ -37,6 +37,7 @@ var TSOS;
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             if (this.isExecuting) {
+                _CPUScheduler.schedule();
                 this.pulse();
             }
         }
@@ -56,7 +57,6 @@ var TSOS;
                         case 0x1:
                             this.acc = this.fetch();
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Load Accumulator from Memory instruction
@@ -69,15 +69,12 @@ var TSOS;
                         case 0x1:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x2:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x3:
                             this.acc = this.execute();
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Store the Accumulator in Memory instruction
@@ -90,14 +87,11 @@ var TSOS;
                         case 0x1:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x2:
                             this.decode(this.fetch());
                             this.step += 0x3;
-                            break;
                         case 0x5:
                             this.writeBack(this.acc);
-                            break;
                     }
                     break;
                 // Handles the Load the Accumulator from X Register instruction
@@ -110,7 +104,6 @@ var TSOS;
                         case 0x1:
                             this.acc = this.xReg;
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Load the Accumulator from Y Register instruction
@@ -123,7 +116,6 @@ var TSOS;
                         case 0x1:
                             this.acc = this.yReg;
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Add with Carry (adds contents of an address to the accumulator and keeps the result in the accumulator) instruction
@@ -136,15 +128,12 @@ var TSOS;
                         case 0x1:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x2:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x3:
                             this.adder(this.execute());
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Load X Register with a Constant instruction
@@ -157,7 +146,6 @@ var TSOS;
                         case 0x1:
                             this.xReg = this.fetch();
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Load X Register from Memory instruction
@@ -170,15 +158,12 @@ var TSOS;
                         case 0x1:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x2:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x3:
                             this.xReg = this.execute();
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Load X Register from Accumulator instruction
@@ -191,7 +176,6 @@ var TSOS;
                         case 0x1:
                             this.xReg = this.acc;
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Load Y Register with a Constant instruction
@@ -204,7 +188,6 @@ var TSOS;
                         case 0x1:
                             this.yReg = this.fetch();
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Load Y Register from Memory instruction
@@ -217,15 +200,12 @@ var TSOS;
                         case 0x1:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x2:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x3:
                             this.yReg = this.execute();
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Load Y Register from Accumulator instruction
@@ -238,7 +218,6 @@ var TSOS;
                         case 0x1:
                             this.yReg = this.acc;
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the No Operation instruction
@@ -250,7 +229,6 @@ var TSOS;
                             break;
                         case 0x1:
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Compare a Byte in Memory to the X Register and Set Zero Flag if Equal instruction
@@ -263,15 +241,12 @@ var TSOS;
                         case 0x1:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x2:
                             this.decode(this.fetch());
                             this.step += 0x2;
-                            break;
                         case 0x4:
                             this.zFlag = this.execute(this.xReg);
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Branch 'n' Bytes if Zero Flag = 0 instruction
@@ -291,7 +266,6 @@ var TSOS;
                                 this.branchAdder(this.fetch());
                             }
                             this.step = 0x0;
-                            break;
                     }
                     break;
                 // Handles the Increment the Value of a Byte instruction
@@ -304,19 +278,15 @@ var TSOS;
                         case 0x1:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x2:
                             this.decode(this.fetch());
                             this.step += 0x1;
-                            break;
                         case 0x3:
                             this.acc = this.execute();
                             this.step += 0x1;
-                            break;
                         case 0x4:
                             this.adder(0x1);
                             this.step += 0x1;
-                            break;
                         case 0x5:
                             this.writeBack(this.acc);
                     }
@@ -330,10 +300,8 @@ var TSOS;
                             break;
                         case 0x1:
                             this.execute();
-                            break;
                         case 0x2:
                             this.execute();
-                            break;
                     }
                     break;
                 // Handles the Break instruction (and the first instruction)
@@ -345,7 +313,6 @@ var TSOS;
                                 this.IR = this.fetch();
                                 this.step += 0x1;
                                 this.brkFlag++;
-                                break;
                         }
                     }
                     // SHUTS DOWN THE CPU (and by extension the System)
@@ -355,7 +322,8 @@ var TSOS;
                         this.clearAll();
                         _Console.advanceLine();
                         _OsShell.putPrompt();
-                        readyQueue[_MemoryManager.executingPid].state = "Completed";
+                        readyQueue[0].state = "Terminated";
+                        _CPUScheduler.currentQuantum = _CPUScheduler.quantum;
                     }
                     break;
             }
@@ -383,6 +351,8 @@ var TSOS;
                 // Sets the High Order Byte
                 case 0x2:
                     this.memoryAccessor.setHighOrderByte(data);
+                    this.memoryAccessor
+                        .setAddress(this.memoryAccessor.getAddress() + this.memoryAccessor.getBaseValue());
                     break;
             }
         }
@@ -403,10 +373,19 @@ var TSOS;
                         // For System Call when xReg == 2:
                         // Sets the PCB with the values in the CPU and sets the PC with the address in the Y Register
                         case 0x02:
-                            readyQueue[_MemoryManager.executingPid].saveContext(_CPU);
-                            this.PC = this.yReg;
-                            this.step += 1;
-                            break;
+                            let tempPC = this.PC;
+                            this.PC = this.yReg + this.memoryAccessor.getBaseValue();
+                            // Fetches the next byte in memory
+                            let data = this.fetch();
+                            while (data !== 0x00) {
+                                // If data not equal to 0x00, decodes the hexadecimal value in memory to its corresponding ASCII character and prints it
+                                _Console.putText(String.fromCharCode(data));
+                                data = this.fetch();
+                            }
+                            // If data is equal to 0x00, returns PC to its original state and sets contextPC back to 0x0000
+                            this.PC = tempPC;
+                            this.IR = this.fetch();
+                            this.step = 0x0;
                     }
                     break;
                 // Execute 2 for System Call when xReg == 2
@@ -432,7 +411,8 @@ var TSOS;
                     break;
                 // Gets the data from the Memory from the address given in the address member in the MMU
                 case 0x03:
-                    if (this.memoryAccessor.getAddress() >= 0x000 && this.memoryAccessor.getAddress() < 0x100) {
+                    if (this.memoryAccessor.getAddress() >= this.memoryAccessor.getBaseValue()
+                        && this.memoryAccessor.getAddress() < this.memoryAccessor.getBaseValue() + 0x100) {
                         return this.memoryAccessor.getData();
                     }
                     else {
@@ -503,7 +483,6 @@ var TSOS;
             }
         }
         clearAll() {
-            this.isExecuting = false;
             this.brkFlag = 0x0;
             this.step = 0x0;
             this.IR = 0x00;
