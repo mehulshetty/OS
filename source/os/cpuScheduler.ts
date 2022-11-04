@@ -11,6 +11,7 @@ module TSOS {
         }
 
         public schedule() {
+            this.updateWaitAndTurnaroundTime();
             switch(this.scheduleType) {
                 case "RR":
                     if (this.currentQuantum != this.quantum) {
@@ -26,6 +27,24 @@ module TSOS {
 
         public start() {
             _CPUDispatcher.startRunning();
+        }
+
+        public updateWaitAndTurnaroundTime() {
+            console.log("PROcesses: ", waitAndTurnaroundTimeTable);
+            for(let processNum = 0; processNum < readyQueue.length; processNum++) {
+                let currentProcess = readyQueue[processNum];
+                switch(currentProcess.state) {
+                    // Updates Wait Time
+                    case "Ready":
+                        waitAndTurnaroundTimeTable[currentProcess.pid.toString()][0] =
+                            waitAndTurnaroundTimeTable[currentProcess.pid.toString()][0] + 1;
+                    // Updates Turnaround Time
+                    case "Running":
+                        waitAndTurnaroundTimeTable[currentProcess.pid.toString()][1] =
+                            waitAndTurnaroundTimeTable[currentProcess.pid.toString()][1] + 1;
+                        break;
+                }
+            }
         }
     }
 }

@@ -52,6 +52,8 @@ module TSOS {
                 residentList.push(new PCB(
                     this.pid, storeLoc * 0x100, (storeLoc * 0x100) + 0x100, "Resident", storeLoc * 0x100));
 
+                waitAndTurnaroundTimeTable[this.pid.toString()] = [0,0];
+
                 return "Process " + (this.pid++).toString() + " created.";
             } else {
                 return "All memory locations are full. Clear memory before loading another program."
@@ -77,6 +79,7 @@ module TSOS {
 
             for(let processNum = 0; processNum < residentList.length; processNum++) {
                 if (residentList[processNum].pid == commandPid) {
+                    residentList[processNum].state = "Ready";
                     readyQueue.push(residentList[processNum]);
                     residentList.splice(processNum, 1);
                 }
@@ -86,6 +89,10 @@ module TSOS {
                 _CPUScheduler.start();
                 _CPU.isExecuting = true;
             }
+        }
+
+        public clearMem () {
+            this.memoryMap = { 0: -1, 1: -1, 2: -1 };
         }
     }
 }

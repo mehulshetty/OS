@@ -467,19 +467,57 @@ var TSOS;
         }
         shellQuantum(args) {
             if (args.length > 0) {
-                let newQuantum = parseInt(args[0]);
-                _CPUScheduler.quantum = newQuantum;
+                _CPUScheduler.quantum = parseInt(args[0]);
             }
         }
         shellClearMem() {
             _Memory.reset();
+            _MemoryManager.clearMem();
         }
         shellKill(args) {
+            if (args.length > 0) {
+                for (let processNum = 0; processNum < readyQueue.length; processNum++) {
+                    if (readyQueue[processNum].pid == parseInt(args[0])) {
+                        readyQueue[processNum].state = "Terminated";
+                        _CPUScheduler.currentQuantum = _CPUScheduler.quantum;
+                        break;
+                    }
+                }
+            }
         }
         shellKillAll() {
+            let newQueue = readyQueue;
             readyQueue = [];
+            for (let processNum = 0; processNum < newQueue.length; processNum++) {
+                terminatedList.push(newQueue[processNum].pid);
+            }
+            _CPU.clearAll();
         }
         shellPS() {
+            let processList = {};
+            for (let processNum = 0; processNum < residentList.length; processNum++) {
+                let currentPid = residentList[processNum].pid;
+                processList[currentPid.toString()] = "Resident";
+            }
+            for (let processNum = 0; processNum < readyQueue.length; processNum++) {
+                let currentPid = readyQueue[processNum].pid;
+                processList[currentPid.toString()] = readyQueue[processNum].state;
+            }
+            console.log("LISTYS", terminatedList);
+            for (let processNum = 0; processNum < terminatedList.length; processNum++) {
+                let currentPid = terminatedList[processNum];
+                processList[currentPid.toString()] = "Terminated";
+            }
+            console.log("OBJ", processList);
+            _StdOut.putText("  PID               State");
+            _StdOut.advanceLine();
+            let sortedKeys = Object.keys(processList).sort();
+            for (let keyNum = 0; keyNum < sortedKeys.length; keyNum++) {
+                let pid = sortedKeys[keyNum];
+                let outputText = pid.padStart(5, " ") + processList[pid].padStart(20, " ");
+                _StdOut.putText(outputText);
+                _StdOut.advanceLine();
+            }
         }
     }
     TSOS.Shell = Shell;

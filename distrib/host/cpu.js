@@ -194,6 +194,7 @@ var TSOS;
                 case 0xAC:
                     switch (this.step) {
                         case 0x0:
+                            console.log("AM I HERE");
                             this.IR = this.fetch();
                             this.step += 0x1;
                             break;
@@ -205,6 +206,7 @@ var TSOS;
                             this.step += 0x1;
                         case 0x3:
                             this.yReg = this.execute();
+                            console.log("YLOC LOCO: ", this.PC);
                             this.step = 0x0;
                     }
                     break;
@@ -300,8 +302,10 @@ var TSOS;
                             break;
                         case 0x1:
                             this.execute();
+                        /**
                         case 0x2:
                             this.execute();
+                         */
                     }
                     break;
                 // Handles the Break instruction (and the first instruction)
@@ -325,6 +329,16 @@ var TSOS;
                         readyQueue[0].state = "Terminated";
                         _CPUScheduler.currentQuantum = _CPUScheduler.quantum;
                     }
+                    break;
+                // Handles Invalid Op Code
+                default:
+                    _Console.advanceLine();
+                    _Console.putText("Process Execution Error: Invalid Op Code <" + this.IR.toString(16) +
+                        "> found in the process with PID " + readyQueue[0].pid + ". Process Terminated.");
+                    this.clearAll();
+                    _Console.advanceLine();
+                    _OsShell.putPrompt();
+                    readyQueue[0].state = "Terminated";
                     break;
             }
             // Increases the cpuClockCount by one
@@ -385,30 +399,33 @@ var TSOS;
                             // If data is equal to 0x00, returns PC to its original state and sets contextPC back to 0x0000
                             this.PC = tempPC;
                             this.IR = this.fetch();
+                            this.step = 0x1;
+                    }
+                    break;
+                /**
+            // Execute 2 for System Call when xReg == 2
+            case 0x02:
+                switch (this.xReg) {
+
+                    // For System Call when xReg == 2:
+                    // Prints the 0x00 terminated string stored at address in the Y register
+                    case 0x02:
+                        // Fetches the next byte in memory
+                        let data = this.fetch();
+                        // If data not equal to 0x00, decodes the hexadecimal value in memory to its corresponding ASCII character and prints it
+                        if (data !== 0x00) {
+                            _Console.putText(String.fromCharCode(data));
+                        }
+                        // If data is equal to 0x00, returns PC to its original state and sets contextPC back to 0x0000
+                        else {
+                            // process.stdout.write(ASCII.decode(0x0A));
+                            readyQueue[_MemoryManager.executingPid].getContext(_CPU);
                             this.step = 0x0;
-                    }
-                    break;
-                // Execute 2 for System Call when xReg == 2
-                case 0x02:
-                    switch (this.xReg) {
-                        // For System Call when xReg == 2:
-                        // Prints the 0x00 terminated string stored at address in the Y register
-                        case 0x02:
-                            // Fetches the next byte in memory
-                            let data = this.fetch();
-                            // If data not equal to 0x00, decodes the hexadecimal value in memory to its corresponding ASCII character and prints it
-                            if (data !== 0x00) {
-                                _Console.putText(String.fromCharCode(data));
-                            }
-                            // If data is equal to 0x00, returns PC to its original state and sets contextPC back to 0x0000
-                            else {
-                                // process.stdout.write(ASCII.decode(0x0A));
-                                readyQueue[_MemoryManager.executingPid].getContext(_CPU);
-                                this.step = 0x0;
-                            }
-                            break;
-                    }
-                    break;
+                        }
+                        break;
+                }
+                break;
+                 */
                 // Gets the data from the Memory from the address given in the address member in the MMU
                 case 0x03:
                     if (this.memoryAccessor.getAddress() >= this.memoryAccessor.getBaseValue()
@@ -418,10 +435,13 @@ var TSOS;
                     else {
                         this.memoryAccessError();
                     }
+                    break;
                 // Checks if value1 is equal to a given location in memory
                 case 0x04:
                     // Returns 0x1 if value1 is equal to the location in memory
-                    if (value1 == this.memoryAccessor.getData()) {
+                    let returnData = this.memoryAccessor.getData();
+                    console.log("YESHERE: ", returnData);
+                    if (value1 == returnData) {
                         return 0x1;
                     }
                     // Returns 0x0 if value1 is not equal to the location in memory
@@ -479,7 +499,9 @@ var TSOS;
                 this.PC = newPC;
             }
             else {
+                console.log("newPC: ", newPC);
                 this.PC = newPC % 0x100;
+                console.log("newPC: ", this.PC);
             }
         }
         clearAll() {

@@ -191,13 +191,14 @@ module TSOS {
             if(_CPU.isExecuting) {
                 for(let blockRow = 0x0; blockRow < readyQueue.length; blockRow++) {
                     let block = readyQueue[blockRow];
-                    updatedHtmlText += "<tr><th>" + block.pid + "</th>";
+                    updatedHtmlText += "<tr><td>" + block.pid.toString(16) + "</td>";
                     updatedHtmlText += "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>";
                     updatedHtmlText += "<td>" + _CPU.IR.toString(16).padStart(3, '0') + "</td>";
                     updatedHtmlText += "<td>" + _CPU.acc.toString(16).padStart(3, '0') + "</td>";
                     updatedHtmlText += "<td>" + _CPU.xReg.toString(16).padStart(3, '0') + "</td>";
                     updatedHtmlText += "<td>" + _CPU.yReg.toString(16).padStart(3, '0') + "</td>";
                     updatedHtmlText += "<td>" + _CPU.zFlag.toString(16).padStart(3, '0') + "</td>";
+                    updatedHtmlText += "<td>" + block.baseRegister.toString(16).padStart(3, '0') + "</td>";
                     updatedHtmlText += "<td>" + block.state + "</td>";
                     updatedHtmlText += "</tr>";
                 }

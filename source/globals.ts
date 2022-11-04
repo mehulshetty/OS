@@ -13,7 +13,7 @@
 //
 
 const APP_NAME: string    = "zerOS";   // 'cause Bob and I were at a loss for a better name.
-const APP_VERSION: string = "0.3";   // What did you expect?
+const APP_VERSION: string = "0.7";   // What did you expect?
 
 const CPU_CLOCK_INTERVAL: number = 100;   // This is in ms (milliseconds) so 1000 = 1 second.
 
@@ -71,6 +71,8 @@ let isCtrl: boolean = false;
 
 let residentList: TSOS.PCB[] = [];
 let readyQueue: TSOS.PCB[] = [];
+let terminatedList: number[] = [];
+let waitAndTurnaroundTimeTable: Object = {};
 
 // For testing (and enrichment)...
 var Glados: any = null;  // This is the function Glados() in glados-ip*.js http://alanclasses.github.io/TSOS/test/ .
