@@ -503,12 +503,10 @@ var TSOS;
                 let currentPid = readyQueue[processNum].pid;
                 processList[currentPid.toString()] = readyQueue[processNum].state;
             }
-            console.log("LISTYS", terminatedList);
             for (let processNum = 0; processNum < terminatedList.length; processNum++) {
                 let currentPid = terminatedList[processNum];
                 processList[currentPid.toString()] = "Terminated";
             }
-            console.log("OBJ", processList);
             _StdOut.putText("  PID               State");
             _StdOut.advanceLine();
             let sortedKeys = Object.keys(processList).sort();

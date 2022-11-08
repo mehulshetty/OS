@@ -43,7 +43,6 @@ module TSOS {
                 // Writes the input data in memory
                 for (let arrayElemNum = 0; arrayElemNum < loadDataArray.length; arrayElemNum++) {
                     _MemoryAccessor.writeImmediate(storeLoc * 0x100 + arrayElemNum, parseInt(loadDataArray[arrayElemNum], 16));
-                    console.log("INPUT");
                 }
 
                 // TODO: Implement an actual way to map PIDs to their location within memory
@@ -65,23 +64,13 @@ module TSOS {
          * @param commandPid the pid of the command to be executed
          */
         public run (commandPid: number) {
-            /**
-             // Sets the pID for the process that is being executed
-             this.executingPid = commandPid;
-
-             // Gets the memory location for the process to be executed
-             let executeMemoryLocation =
-             Object.keys(this.memoryMap).find(key => this.memoryMap[key] == this.executingPid);
-
-             _CPU.isExecuting = true;
-             _CPU.PC = parseInt(executeMemoryLocation) * 0x100;
-             */
 
             for(let processNum = 0; processNum < residentList.length; processNum++) {
                 if (residentList[processNum].pid == commandPid) {
                     residentList[processNum].state = "Ready";
                     readyQueue.push(residentList[processNum]);
                     residentList.splice(processNum, 1);
+                    break;
                 }
             }
 

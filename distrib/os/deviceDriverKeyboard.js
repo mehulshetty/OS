@@ -29,7 +29,14 @@ var TSOS;
             var isShifted = params[1];
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
             if (isCtrl && keyCode == 67) {
-                _CPU.clearAll();
+                let currentProcess = _MemoryManager.executingPid;
+                for (let processNum = 0; processNum < readyQueue.length; processNum++) {
+                    if (readyQueue[processNum].pid == currentProcess) {
+                        readyQueue[processNum].state = "Terminated";
+                        _CPUScheduler.currentQuantum = _CPUScheduler.quantum;
+                        break;
+                    }
+                }
             }
             else {
                 var chr = "";

@@ -194,7 +194,6 @@ var TSOS;
                 case 0xAC:
                     switch (this.step) {
                         case 0x0:
-                            console.log("AM I HERE");
                             this.IR = this.fetch();
                             this.step += 0x1;
                             break;
@@ -206,7 +205,6 @@ var TSOS;
                             this.step += 0x1;
                         case 0x3:
                             this.yReg = this.execute();
-                            console.log("YLOC LOCO: ", this.PC);
                             this.step = 0x0;
                     }
                     break;
@@ -402,30 +400,6 @@ var TSOS;
                             this.step = 0x1;
                     }
                     break;
-                /**
-            // Execute 2 for System Call when xReg == 2
-            case 0x02:
-                switch (this.xReg) {
-
-                    // For System Call when xReg == 2:
-                    // Prints the 0x00 terminated string stored at address in the Y register
-                    case 0x02:
-                        // Fetches the next byte in memory
-                        let data = this.fetch();
-                        // If data not equal to 0x00, decodes the hexadecimal value in memory to its corresponding ASCII character and prints it
-                        if (data !== 0x00) {
-                            _Console.putText(String.fromCharCode(data));
-                        }
-                        // If data is equal to 0x00, returns PC to its original state and sets contextPC back to 0x0000
-                        else {
-                            // process.stdout.write(ASCII.decode(0x0A));
-                            readyQueue[_MemoryManager.executingPid].getContext(_CPU);
-                            this.step = 0x0;
-                        }
-                        break;
-                }
-                break;
-                 */
                 // Gets the data from the Memory from the address given in the address member in the MMU
                 case 0x03:
                     if (this.memoryAccessor.getAddress() >= this.memoryAccessor.getBaseValue()
@@ -440,7 +414,6 @@ var TSOS;
                 case 0x04:
                     // Returns 0x1 if value1 is equal to the location in memory
                     let returnData = this.memoryAccessor.getData();
-                    console.log("YESHERE: ", returnData);
                     if (value1 == returnData) {
                         return 0x1;
                     }
@@ -495,15 +468,16 @@ var TSOS;
          */
         branchAdder(number) {
             let newPC = this.PC + number;
-            if (newPC < 0x100) {
+            if (newPC < this.memoryAccessor.getBaseValue() + 0x100) {
                 this.PC = newPC;
             }
             else {
-                console.log("newPC: ", newPC);
-                this.PC = newPC % 0x100;
-                console.log("newPC: ", this.PC);
+                this.PC = this.memoryAccessor.getBaseValue() + (newPC % 0x100);
             }
         }
+        /**
+         * Clears all the members of the CPU
+         */
         clearAll() {
             this.brkFlag = 0x0;
             this.step = 0x0;

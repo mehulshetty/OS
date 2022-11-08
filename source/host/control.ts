@@ -158,7 +158,7 @@ module TSOS {
 
             document.getElementById("cpuViewRow").innerHTML = updatedHtmlText;
 
-            console.log("PID: ", _MemoryManager.executingPid,
+            console.log("PID: ", _MemoryManager.executingPid.toString(),
                 " | PC: ", _CPU.PC.toString(16).padStart(3, '0'),
                 " | IR: ", _CPU.IR.toString(16).padStart(2, '0'),
                 " | ACC: ", _CPU.acc.toString(16).padStart(2, '0'),
@@ -191,16 +191,30 @@ module TSOS {
             if(_CPU.isExecuting) {
                 for(let blockRow = 0x0; blockRow < readyQueue.length; blockRow++) {
                     let block = readyQueue[blockRow];
-                    updatedHtmlText += "<tr><td>" + block.pid.toString(16) + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.IR.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.acc.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.xReg.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.yReg.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.zFlag.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + block.baseRegister.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + block.state + "</td>";
-                    updatedHtmlText += "</tr>";
+                    if(block.pid == _MemoryManager.executingPid) {
+                        updatedHtmlText += "<tr><td>" + block.pid.toString(16) + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.IR.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.acc.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.xReg.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.yReg.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.zFlag.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.baseRegister.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.state + "</td>";
+                        updatedHtmlText += "</tr>";
+                    }
+                    else {
+                        updatedHtmlText += "<tr><td>" + block.pid.toString(16) + "</td>";
+                        updatedHtmlText += "<td>" + block.pc.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.ir.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.acc.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.xReg.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.yReg.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.zFlag.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.baseRegister.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.state + "</td>";
+                        updatedHtmlText += "</tr>";
+                    }
                 }
             }
 

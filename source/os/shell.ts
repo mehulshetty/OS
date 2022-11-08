@@ -579,6 +579,7 @@ module TSOS {
         }
 
         public shellRunAll() {
+
             while(residentList.length != 0) {
                 _MemoryManager.run(residentList[0].pid);
             }
@@ -631,14 +632,10 @@ module TSOS {
                 processList[currentPid.toString()] = readyQueue[processNum].state;
             }
 
-            console.log("LISTYS", terminatedList);
-
             for(let processNum = 0; processNum < terminatedList.length; processNum++) {
                 let currentPid = terminatedList[processNum];
                 processList[currentPid.toString()] = "Terminated";
             }
-
-            console.log("OBJ", processList);
 
             _StdOut.putText("  PID               State");
             _StdOut.advanceLine();

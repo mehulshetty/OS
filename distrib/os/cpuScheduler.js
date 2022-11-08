@@ -1,7 +1,7 @@
 /* ------------
    cpuScheduler.ts
 
-   This virtual memory manager "allocates" and "deallocates" storage in memory..
+   The CPU Scheduler calls the CPU dispatcher when it is time to perform a context switch
    ------------ */
 var TSOS;
 (function (TSOS) {
@@ -11,6 +11,9 @@ var TSOS;
             this.currentQuantum = currentQuantum;
             this.scheduleType = scheduleType;
         }
+        /**
+         * Calls the CPU Dispatcher to switch context when current quantum is equal to the quantum limit
+         */
         schedule() {
             this.updateWaitAndTurnaroundTime();
             switch (this.scheduleType) {
@@ -25,19 +28,24 @@ var TSOS;
                     break;
             }
         }
+        /**
+         * Starts the CPU Dispatcher
+         */
         start() {
             _CPUDispatcher.startRunning();
         }
+        /**
+         * Updates the wait and turnaround times for processes in the ready queue
+         */
         updateWaitAndTurnaroundTime() {
-            console.log("PROcesses: ", waitAndTurnaroundTimeTable);
             for (let processNum = 0; processNum < readyQueue.length; processNum++) {
                 let currentProcess = readyQueue[processNum];
                 switch (currentProcess.state) {
-                    // Updates Wait Time
+                    // Updates Wait and Turnaround Time for processes in the Ready state
                     case "Ready":
                         waitAndTurnaroundTimeTable[currentProcess.pid.toString()][0] =
                             waitAndTurnaroundTimeTable[currentProcess.pid.toString()][0] + 1;
-                    // Updates Turnaround Time
+                    // Updates Turnaround Time for processes in the Running state
                     case "Running":
                         waitAndTurnaroundTimeTable[currentProcess.pid.toString()][1] =
                             waitAndTurnaroundTimeTable[currentProcess.pid.toString()][1] + 1;
