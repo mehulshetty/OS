@@ -85,6 +85,48 @@ var TSOS;
                 }
             }
         }
+        findRenameTsb(currentFilename) {
+            let track = 0x0;
+            for (let sector = 0x0; sector < 0x8; sector++) {
+                for (let block = 0x0; block < 0x8; block++) {
+                    let tsb = track.toString() + sector.toString() + block.toString();
+                    if (tsb != "000") {
+                        let filenameArray = JSON.parse(sessionStorage.getItem(tsb));
+                        if (filenameArray[0] == "1") {
+                            let currentFilenameArray = currentFilename.split('')
+                                .map(char => char.charCodeAt(0).toString(16));
+                            let compareFilenameArray = filenameArray.slice(4, currentFilenameArray.length + 4);
+                            if (JSON.stringify(currentFilenameArray) == JSON.stringify(compareFilenameArray)) {
+                                if (filenameArray[currentFilenameArray.length + 4] == "--") {
+                                    return tsb;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return "";
+        }
+        rename(currentFilename, newFilename) {
+            let renameTsb = this.findRenameTsb(currentFilename);
+            let renameTsbArray = JSON.parse(sessionStorage.getItem(renameTsb));
+            if (renameTsb != "") {
+                let newArray = new Array(64).fill("--");
+                newArray[0x0] = renameTsbArray[0x0];
+                newArray[0x1] = renameTsbArray[0x1];
+                newArray[0x2] = renameTsbArray[0x2];
+                newArray[0x3] = renameTsbArray[0x3];
+                let filenameArray = newFilename.split('')
+                    .map(char => char.charCodeAt(0).toString(16));
+                let arrayElemNum = 0x4;
+                for (let letter of filenameArray) {
+                    newArray[arrayElemNum] = letter;
+                    arrayElemNum++;
+                }
+                sessionStorage.setItem(renameTsb, JSON.stringify(newArray));
+                return "File renamed.";
+            }
+        }
     }
     TSOS.DiskSystemDeviceDriver = DiskSystemDeviceDriver;
 })(TSOS || (TSOS = {}));

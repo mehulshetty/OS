@@ -188,25 +188,25 @@ module TSOS {
             this.commandList[this.commandList.length] = sc;
 
             // delete
-            sc = new ShellCommand(this.shellKillAll,
+            sc = new ShellCommand(this.shellDelete,
                 "delete",
                 "- <filename> - Removes filename from storage.");
             this.commandList[this.commandList.length] = sc;
 
             // copy
-            sc = new ShellCommand(this.shellKillAll,
+            sc = new ShellCommand(this.shellCopy,
                 "copy",
                 "- <existing filename> <new filename> - Copies the existing file into the new one.");
             this.commandList[this.commandList.length] = sc;
 
             // rename
-            sc = new ShellCommand(this.shellKillAll,
+            sc = new ShellCommand(this.shellRename,
                 "rename",
                 "- <current filename> <new filename> - Rename the current file to the new name.");
             this.commandList[this.commandList.length] = sc;
 
             // ls
-            sc = new ShellCommand(this.shellKillAll,
+            sc = new ShellCommand(this.shellList,
                 "ls",
                 "- Displays all the files currently stored on the disk.");
             this.commandList[this.commandList.length] = sc;
@@ -730,8 +730,11 @@ module TSOS {
 
         }
 
-        public shellRename() {
-
+        public shellRename(args: string[]) {
+            if (args.length > 1) {
+                console.log(args);
+                _krnDiskDriver.rename(args[0], args[1]);
+            }
         }
 
         public shellList() {

@@ -106,16 +106,16 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellWrite, "write", "- <filename> \"data\" - Writes the data inside the quotes to the file with given name.");
             this.commandList[this.commandList.length] = sc;
             // delete
-            sc = new TSOS.ShellCommand(this.shellKillAll, "delete", "- <filename> - Removes filename from storage.");
+            sc = new TSOS.ShellCommand(this.shellDelete, "delete", "- <filename> - Removes filename from storage.");
             this.commandList[this.commandList.length] = sc;
             // copy
-            sc = new TSOS.ShellCommand(this.shellKillAll, "copy", "- <existing filename> <new filename> - Copies the existing file into the new one.");
+            sc = new TSOS.ShellCommand(this.shellCopy, "copy", "- <existing filename> <new filename> - Copies the existing file into the new one.");
             this.commandList[this.commandList.length] = sc;
             // rename
-            sc = new TSOS.ShellCommand(this.shellKillAll, "rename", "- <current filename> <new filename> - Rename the current file to the new name.");
+            sc = new TSOS.ShellCommand(this.shellRename, "rename", "- <current filename> <new filename> - Rename the current file to the new name.");
             this.commandList[this.commandList.length] = sc;
             // ls
-            sc = new TSOS.ShellCommand(this.shellKillAll, "ls", "- Displays all the files currently stored on the disk.");
+            sc = new TSOS.ShellCommand(this.shellList, "ls", "- Displays all the files currently stored on the disk.");
             this.commandList[this.commandList.length] = sc;
             // Display the initial prompt.
             this.putPrompt();
@@ -563,7 +563,11 @@ var TSOS;
         }
         shellCopy() {
         }
-        shellRename() {
+        shellRename(args) {
+            if (args.length > 1) {
+                console.log(args);
+                _krnDiskDriver.rename(args[0], args[1]);
+            }
         }
         shellList() {
         }
