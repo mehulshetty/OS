@@ -136,7 +136,7 @@ module TSOS {
             // quantum
             sc = new ShellCommand(this.shellQuantum,
                 "quantum",
-                "- <int> Sets the quantum for round-robin.");
+                "- <int> - Sets the quantum for round-robin.");
             this.commandList[this.commandList.length] = sc;
 
             // clearmem
@@ -159,8 +159,56 @@ module TSOS {
 
             // killall
             sc = new ShellCommand(this.shellKillAll,
-                "quantum",
+                "killall",
                 "- Kills all processes.");
+            this.commandList[this.commandList.length] = sc;
+
+            // format
+            sc = new ShellCommand(this.shellFormat,
+                "format",
+                "- Formats the disk drive.");
+            this.commandList[this.commandList.length] = sc;
+
+            // create
+            sc = new ShellCommand(this.shellCreate,
+                "create",
+                "- <filename> - Creates a file with the specified name.");
+            this.commandList[this.commandList.length] = sc;
+
+            // read
+            sc = new ShellCommand(this.shellRead,
+                "read",
+                "- <filename> - Reads and displays the contents of the file.");
+            this.commandList[this.commandList.length] = sc;
+
+            // write
+            sc = new ShellCommand(this.shellWrite,
+                "write",
+                "- <filename> \"data\" - Writes the data inside the quotes to the file with given name.");
+            this.commandList[this.commandList.length] = sc;
+
+            // delete
+            sc = new ShellCommand(this.shellKillAll,
+                "delete",
+                "- <filename> - Removes filename from storage.");
+            this.commandList[this.commandList.length] = sc;
+
+            // copy
+            sc = new ShellCommand(this.shellKillAll,
+                "copy",
+                "- <existing filename> <new filename> - Copies the existing file into the new one.");
+            this.commandList[this.commandList.length] = sc;
+
+            // rename
+            sc = new ShellCommand(this.shellKillAll,
+                "rename",
+                "- <current filename> <new filename> - Rename the current file to the new name.");
+            this.commandList[this.commandList.length] = sc;
+
+            // ls
+            sc = new ShellCommand(this.shellKillAll,
+                "ls",
+                "- Displays all the files currently stored on the disk.");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
@@ -650,5 +698,37 @@ module TSOS {
 
         }
 
+        public shellFormat() {
+            _krnDiskDriver.format();
+            _StdOut.putText("Disk Formatted.");
+        }
+
+        public shellCreate() {
+
+        }
+
+        public shellRead() {
+
+        }
+
+        public shellWrite() {
+
+        }
+
+        public shellDelete() {
+
+        }
+
+        public shellCopy() {
+
+        }
+
+        public shellRename() {
+
+        }
+
+        public shellList() {
+
+        }
     }
 }
