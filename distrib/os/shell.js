@@ -545,7 +545,15 @@ var TSOS;
             _krnDiskDriver.format();
             _StdOut.putText("Disk Formatted.");
         }
-        shellCreate() {
+        shellCreate(args) {
+            if (args.length > 0) {
+                if (args[0].length < 60) {
+                    _krnDiskDriver.create(args[0]);
+                }
+                else {
+                    _StdOut.putText("Filename cannot exceed 59 characters.");
+                }
+            }
         }
         shellRead() {
         }

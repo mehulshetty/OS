@@ -703,8 +703,15 @@ module TSOS {
             _StdOut.putText("Disk Formatted.");
         }
 
-        public shellCreate() {
-
+        public shellCreate(args: string[]) {
+            if (args.length > 0) {
+                if(args[0].length < 60) {
+                    _krnDiskDriver.create(args[0]);
+                }
+                else {
+                    _StdOut.putText("Filename cannot exceed 59 characters.");
+                }
+            }
         }
 
         public shellRead() {
