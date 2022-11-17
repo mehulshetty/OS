@@ -37,11 +37,12 @@
    <script type="text/javascript" src="distrib/os/pcb.js"></script>
    <script type="text/javascript" src="distrib/os/cpuScheduler.js"></script>
    <script type="text/javascript" src="distrib/os/cpuDispatcher.js"></script>
+   <script type="text/javascript" src="distrib/os/diskSystemDeviceDriver.js"></script>
 
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment the line below to enable GLaDOS testing. -->
-   <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip3.js"></script>
+   <!-- <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip3.js"></script> -->
 
 </head>
 
@@ -219,7 +220,29 @@
           style = "height: 30px;"
           readonly>
 </div>
-
+<br>
+<br>
+<div style="overflow-y:scroll; max-height:400px;">
+   <table class="table table-dark">
+      <thead class="thead-dark">
+      <tr>
+         <th>Disk View</th>
+      </tr>
+      <tr>
+         <th>Track:Sector:Block</th>
+         <th>In Use</th>
+         <th>Next Track</th>
+         <th>Next Sector</th>
+         <th>Next Block</th>
+         <th>Data</th>
+      </tr>
+      </thead>
+      <tbody id="diskViewBody">
+      </tbody>
+   </table>
+</div>
+<br>
+<br>
 <p class="footerText" style="clear:both; color: white; font-family: 'Comic Sans MS'">
    <br>
    Copyright &copy; 2022 - 2022 All Rights Reserved. This is the intellectual property of May-Whool.

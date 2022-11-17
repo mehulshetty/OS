@@ -49,6 +49,8 @@ let _OsShell;
 let _SarcasticMode = false;
 // Global Device Driver Objects - page 12
 let _krnKeyboardDriver = null;
+// Global Disk Driver Objects
+let _krnDiskDriver = null;
 let _hardwareClockID = null;
 let isCtrl = false;
 let residentList = [];

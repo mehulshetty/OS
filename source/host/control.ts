@@ -108,7 +108,8 @@ module TSOS {
             setInterval(() => {
                 this.updateCpuViewRow();
                 this.updateMemoryViewBody();
-                this.updateProcessViewBody();}, 100);
+                this.updateProcessViewBody();
+                this.updateDiskViewBody();}, 100);
 
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
@@ -169,7 +170,7 @@ module TSOS {
 
         public static updateMemoryViewBody(): void {
 
-            let updatedHtmlText = ""
+            let updatedHtmlText = "";
 
             for(let rowStart = 0x000; rowStart < 0x300; rowStart += 0x08 ) {
                 updatedHtmlText += "<tr><th>0x" + rowStart.toString(16).padStart(3, '0') + "</th>";
@@ -182,6 +183,30 @@ module TSOS {
             }
 
             document.getElementById("memoryViewBody").innerHTML = updatedHtmlText;
+        }
+
+        public static updateDiskViewBody(): void {
+
+            let updatedHtmlText = "";
+
+            for(let track = 0x0; track < 0x04; track++) {
+                for(let sector = 0x0; sector < 0x08; sector ++) {
+                    for(let block = 0x0; block < 0x08; block++) {
+                        updatedHtmlText += "<tr><td>" + track + ":" + sector + ":" + block + "</td>";
+
+                        let tsb = track.toString() + sector.toString() + block.toString();
+                        let tsbDataArray = JSON.parse(sessionStorage.getItem(tsb));
+
+                        updatedHtmlText += "<td>" + tsbDataArray[0] +
+                            "</td><td>" + tsbDataArray[1] +
+                            "</td><td>" + tsbDataArray[2] +
+                            "</td><td>" + tsbDataArray[3] +
+                            "</td><td>" + tsbDataArray.slice(4).join(' ') + "</td></tr>";
+                    }
+                }
+            }
+
+            document.getElementById("diskViewBody").innerHTML = updatedHtmlText;
         }
 
         public static updateProcessViewBody(): void {

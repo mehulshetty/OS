@@ -65,6 +65,9 @@ let _SarcasticMode: boolean = false;
 // Global Device Driver Objects - page 12
 let _krnKeyboardDriver: TSOS.DeviceDriverKeyboard  = null;
 
+// Global Disk Driver Objects
+let _krnDiskDriver: TSOS.DiskSystemDeviceDriver  = null;
+
 let _hardwareClockID: number = null;
 
 let isCtrl: boolean = false;

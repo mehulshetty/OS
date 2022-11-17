@@ -84,6 +84,7 @@ var TSOS;
                 this.updateCpuViewRow();
                 this.updateMemoryViewBody();
                 this.updateProcessViewBody();
+                this.updateDiskViewBody();
             }, 100);
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
@@ -138,6 +139,24 @@ var TSOS;
                 updatedHtmlText += "</tr>";
             }
             document.getElementById("memoryViewBody").innerHTML = updatedHtmlText;
+        }
+        static updateDiskViewBody() {
+            let updatedHtmlText = "";
+            for (let track = 0x0; track < 0x04; track++) {
+                for (let sector = 0x0; sector < 0x08; sector++) {
+                    for (let block = 0x0; block < 0x08; block++) {
+                        updatedHtmlText += "<tr><td>" + track + ":" + sector + ":" + block + "</td>";
+                        let tsb = track.toString() + sector.toString() + block.toString();
+                        let tsbDataArray = JSON.parse(sessionStorage.getItem(tsb));
+                        updatedHtmlText += "<td>" + tsbDataArray[0] +
+                            "</td><td>" + tsbDataArray[1] +
+                            "</td><td>" + tsbDataArray[2] +
+                            "</td><td>" + tsbDataArray[3] +
+                            "</td><td>" + tsbDataArray.slice(4).join(' ') + "</td></tr>";
+                    }
+                }
+            }
+            document.getElementById("diskViewBody").innerHTML = updatedHtmlText;
         }
         static updateProcessViewBody() {
             let updatedHtmlText = "";
