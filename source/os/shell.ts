@@ -714,12 +714,20 @@ module TSOS {
             }
         }
 
-        public shellRead() {
+        public shellRead(args: string[]) {
 
         }
 
-        public shellWrite() {
+        public shellWrite(args: string[]) {
+            if (args.length > 0) {
+                let filename = args[0];
+                console.log(filename);
 
+                let data = args.slice(1).join(" ");
+                console.log(data);
+
+                _krnDiskDriver.write(filename, data);
+            }
         }
 
         public shellDelete() {

@@ -71,7 +71,7 @@ var TSOS;
                                 newArray[0x2] = nextLocation[0x1];
                                 newArray[0x3] = nextLocation[0x2];
                                 let filenameArray = filename.split('')
-                                    .map(char => char.charCodeAt(0).toString(16));
+                                    .map(char => char.charCodeAt(0).toString(16).padStart(2, "0"));
                                 let arrayElemNum = 0x4;
                                 for (let letter of filenameArray) {
                                     newArray[arrayElemNum] = letter;
@@ -85,7 +85,7 @@ var TSOS;
                 }
             }
         }
-        findRenameTsb(currentFilename) {
+        findTsb(currentFilename) {
             let track = 0x0;
             for (let sector = 0x0; sector < 0x8; sector++) {
                 for (let block = 0x0; block < 0x8; block++) {
@@ -94,7 +94,7 @@ var TSOS;
                         let filenameArray = JSON.parse(sessionStorage.getItem(tsb));
                         if (filenameArray[0] == "1") {
                             let currentFilenameArray = currentFilename.split('')
-                                .map(char => char.charCodeAt(0).toString(16));
+                                .map(char => char.charCodeAt(0).toString(16).padStart(2, "0"));
                             let compareFilenameArray = filenameArray.slice(4, currentFilenameArray.length + 4);
                             if (JSON.stringify(currentFilenameArray) == JSON.stringify(compareFilenameArray)) {
                                 if (filenameArray[currentFilenameArray.length + 4] == "--") {
@@ -108,7 +108,7 @@ var TSOS;
             return "";
         }
         rename(currentFilename, newFilename) {
-            let renameTsb = this.findRenameTsb(currentFilename);
+            let renameTsb = this.findTsb(currentFilename);
             let renameTsbArray = JSON.parse(sessionStorage.getItem(renameTsb));
             if (renameTsb != "") {
                 let newArray = new Array(64).fill("--");
@@ -117,7 +117,7 @@ var TSOS;
                 newArray[0x2] = renameTsbArray[0x2];
                 newArray[0x3] = renameTsbArray[0x3];
                 let filenameArray = newFilename.split('')
-                    .map(char => char.charCodeAt(0).toString(16));
+                    .map(char => char.charCodeAt(0).toString(16).padStart(2, "0"));
                 let arrayElemNum = 0x4;
                 for (let letter of filenameArray) {
                     newArray[arrayElemNum] = letter;
@@ -126,6 +126,41 @@ var TSOS;
                 sessionStorage.setItem(renameTsb, JSON.stringify(newArray));
                 return "File renamed.";
             }
+        }
+        write(currentFilename, data) {
+            let writeTsb = this.findTsb(currentFilename);
+            if (writeTsb != "") {
+                // Gets rid of the quotes
+                data = data.slice(1, -1);
+                let memoryBlocks = Math.floor(data.length / 60) + 1;
+                let currentData = JSON.parse(sessionStorage.getItem(writeTsb));
+                let currentTsb = currentData[1].toString() + currentData[2].toString() + currentData[3].toString();
+                for (let block = 0x0; block < memoryBlocks; block++) {
+                    let newDataArray = new Array(64).fill("--");
+                    newDataArray[0] = "1";
+                    let maxChars = 60;
+                    // Finds the next block to store data in
+                    if (block != memoryBlocks - 1) {
+                        let unusedLocation = this.findUnusedStorageLocation();
+                        console.log(unusedLocation);
+                        newDataArray[0x1] = unusedLocation[0];
+                        newDataArray[0x2] = unusedLocation[1];
+                        newDataArray[0x3] = unusedLocation[2];
+                    }
+                    else {
+                        maxChars = data.length % 60;
+                    }
+                    for (let charNum = 0; charNum < maxChars; charNum++) {
+                        let characterValue = data.charCodeAt((block * 60) + charNum);
+                        newDataArray[4 + charNum] = characterValue.toString(16).padStart(2, "0");
+                    }
+                    sessionStorage.setItem(currentTsb, JSON.stringify(newDataArray));
+                    if (block != memoryBlocks - 1) {
+                        currentTsb = newDataArray[0x1] + newDataArray[0x2] + newDataArray[0x3];
+                    }
+                }
+            }
+            return "Data written.";
         }
     }
     TSOS.DiskSystemDeviceDriver = DiskSystemDeviceDriver;
