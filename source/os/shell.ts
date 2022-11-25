@@ -721,17 +721,19 @@ module TSOS {
         public shellWrite(args: string[]) {
             if (args.length > 0) {
                 let filename = args[0];
-                console.log(filename);
 
                 let data = args.slice(1).join(" ");
-                console.log(data);
 
                 _krnDiskDriver.write(filename, data);
             }
         }
 
-        public shellDelete() {
+        public shellDelete(args: string[]) {
+            if (args.length > 0) {
+                let filename = args[0];
 
+                _krnDiskDriver.delete(filename);
+            }
         }
 
         public shellCopy() {

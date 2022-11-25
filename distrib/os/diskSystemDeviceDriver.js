@@ -162,6 +162,18 @@ var TSOS;
             }
             return "Data written.";
         }
+        delete(filename) {
+            let deleteTsb = this.findTsb(filename);
+            let deleteItem = JSON.parse(sessionStorage.getItem(deleteTsb));
+            let nextTsb = deleteTsb;
+            while (nextTsb != "------") {
+                deleteItem[0] = "0";
+                sessionStorage.setItem(nextTsb, JSON.stringify(deleteItem));
+                nextTsb = deleteItem[1].toString() + deleteItem[2].toString() + deleteItem[3].toString();
+                deleteItem = JSON.parse(sessionStorage.getItem(nextTsb));
+            }
+            return "File deleted.";
+        }
     }
     TSOS.DiskSystemDeviceDriver = DiskSystemDeviceDriver;
 })(TSOS || (TSOS = {}));
