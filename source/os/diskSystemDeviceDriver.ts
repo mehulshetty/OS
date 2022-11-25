@@ -218,5 +218,32 @@ module TSOS {
 
             return "File deleted."
         }
+
+        public list(): string[] {
+            let allFiles = [];
+
+            for(let track = 0x0; track < 0x1; track++) {
+                for(let sector = 0x0; sector < 0x8; sector ++) {
+                    for(let block = 0x0; block < 0x8; block++) {
+                        let tsb = track.toString() + sector.toString() + block.toString();
+                        let currentData = JSON.parse(sessionStorage.getItem(tsb));
+
+                        if(currentData[0] == "1") {
+                            let filename = "";
+                            let letterNum = 4;
+                            while(currentData[letterNum] != "--") {
+                                filename += String.fromCharCode(parseInt(currentData[letterNum], 16));
+                                letterNum++;
+                            }
+
+                            allFiles.push(filename);
+                        }
+                    }
+                }
+            }
+
+            return allFiles;
+
+        }
     }
 }

@@ -748,7 +748,20 @@ module TSOS {
         }
 
         public shellList() {
+            let allFiles = _krnDiskDriver.list();
 
+            if(allFiles.length != 0) {
+
+                _StdOut.putText("All Files:");
+
+                for(let filename of allFiles) {
+                    _StdOut.advanceLine();
+                    _StdOut.putText(filename);
+                }
+            }
+            else {
+                _StdOut.putText("No files to display. Storage is empty.");
+            }
         }
     }
 }
