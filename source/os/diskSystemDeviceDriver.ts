@@ -49,10 +49,10 @@ module TSOS {
         public findUnusedStorageLocation(): string {
 
             for(let track = 0x1; track < 0x4; track++) {
-                for(let sector = 0x0; sector < 0x8; sector ++) {
+                for(let sector = 0x0; sector < 0x8; sector++) {
                     for(let block = 0x0; block < 0x8; block++) {
                         let tsb = track.toString() + sector.toString() + block.toString();
-                        let inUse = JSON.parse(sessionStorage.getItem(tsb))[0]
+                        let inUse = JSON.parse(sessionStorage.getItem(tsb))[0];
 
                         if(inUse == "0") {
                             return tsb;
@@ -165,6 +165,7 @@ module TSOS {
                 data = data.slice(1,-1);
 
                 let memoryBlocks = Math.floor(data.length / 60) + 1;
+                console.log(data.length + " " + memoryBlocks);
                 let currentData = JSON.parse(sessionStorage.getItem(writeTsb));
                 let currentTsb = currentData[1].toString() + currentData[2].toString() + currentData[3].toString();
 
@@ -173,16 +174,7 @@ module TSOS {
                     newDataArray[0] = "1";
 
                     let maxChars = 60;
-
-                    // Finds the next block to store data in
-                    if(block != memoryBlocks - 1) {
-                        let unusedLocation = this.findUnusedStorageLocation();
-                        console.log(unusedLocation);
-                        newDataArray[0x1] = unusedLocation[0];
-                        newDataArray[0x2] = unusedLocation[1];
-                        newDataArray[0x3] = unusedLocation[2];
-                    }
-                    else {
+                    if(block == (memoryBlocks - 1)) {
                         maxChars = data.length % 60;
                     }
 
@@ -191,10 +183,25 @@ module TSOS {
                         newDataArray[4 + charNum] = characterValue.toString(16).padStart(2,"0");
                     }
 
+                    // Finds the next block to store data in
+                    if(block < (memoryBlocks - 1)) {
+                        let unusedLocation = this.findUnusedStorageLocation();
+
+                        let claimLocation = new Array(64).fill("--");
+                        claimLocation[0] = "1";
+                        sessionStorage.setItem(unusedLocation, JSON.stringify(claimLocation));
+
+                        newDataArray[1] = unusedLocation[0];
+                        newDataArray[2] = unusedLocation[1];
+                        newDataArray[3] = unusedLocation[2];
+                    }
+
                     sessionStorage.setItem(currentTsb, JSON.stringify(newDataArray));
 
-                    if(block != memoryBlocks - 1) {
-                        currentTsb = newDataArray[0x1] + newDataArray[0x2] + newDataArray[0x3];
+                    if(block < (memoryBlocks - 1)) {
+                        currentTsb = newDataArray[1].toString() +
+                            newDataArray[2].toString() +
+                            newDataArray[3].toString();
                     }
                 }
             }
@@ -244,6 +251,34 @@ module TSOS {
 
             return allFiles;
 
+        }
+
+        public read(filename: string): string {
+            let readTsb = this.findTsb(filename);
+
+            let readItem = JSON.parse(sessionStorage.getItem(readTsb));
+            readTsb = readItem[1].toString() + readItem[2].toString() + readItem[3].toString();
+
+            let dataString = "";
+
+            while(readTsb != "------") {
+                readItem = JSON.parse(sessionStorage.getItem(readTsb));
+
+                let letterNum = 4;
+                while(readItem[letterNum] != "--") {
+                    dataString += String.fromCharCode(parseInt(readItem[letterNum], 16));
+
+                    if(letterNum == 63) {
+                        break;
+                    }
+
+                    letterNum++;
+                }
+
+                readTsb = readItem[1].toString() + readItem[2].toString() + readItem[3].toString();
+            }
+
+            return dataString;
         }
     }
 }

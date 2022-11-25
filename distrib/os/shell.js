@@ -556,6 +556,11 @@ var TSOS;
             }
         }
         shellRead(args) {
+            if (args.length > 0) {
+                let filename = args[0];
+                let data = _krnDiskDriver.read(filename);
+                _StdOut.putText(data);
+            }
         }
         shellWrite(args) {
             if (args.length > 0) {

@@ -715,7 +715,12 @@ module TSOS {
         }
 
         public shellRead(args: string[]) {
+            if (args.length > 0) {
+                let filename = args[0];
 
+                let data = _krnDiskDriver.read(filename);
+                _StdOut.putText(data);
+            }
         }
 
         public shellWrite(args: string[]) {
