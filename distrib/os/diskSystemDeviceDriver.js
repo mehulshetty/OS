@@ -179,16 +179,7 @@ var TSOS;
             let writeTsb = this.findTsb(currentFilename);
             if (writeTsb != "") {
                 let currentData = JSON.parse(sessionStorage.getItem(writeTsb));
-                // Deletes all data in the file if any data exists
-                let deleteTsb = currentData[1].toString() + currentData[2].toString() + currentData[3].toString();
-                let deleteItem = JSON.parse(sessionStorage.getItem(deleteTsb));
-                while (deleteTsb != "------") {
-                    deleteItem[0] = "0";
-                    sessionStorage.setItem(deleteTsb, JSON.stringify(deleteItem));
-                    deleteTsb = deleteItem[1].toString() + deleteItem[2].toString() + deleteItem[3].toString();
-                    deleteItem = JSON.parse(sessionStorage.getItem(deleteTsb));
-                }
-                let memoryBlocks = Math.floor(data.length / 60) + 1;
+                let memoryBlocks = 5;
                 let currentTsb = currentData[1].toString() + currentData[2].toString() + currentData[3].toString();
                 for (let block = 0x0; block < memoryBlocks; block++) {
                     let newDataArray = new Array(64).fill("--");
@@ -272,6 +263,26 @@ var TSOS;
                 readTsb = readItem[1].toString() + readItem[2].toString() + readItem[3].toString();
             }
             return dataString;
+        }
+        readDirect(filename) {
+            let readTsb = this.findTsb(filename);
+            let readItem = JSON.parse(sessionStorage.getItem(readTsb));
+            readTsb = readItem[1].toString() + readItem[2].toString() + readItem[3].toString();
+            let dataArray = new Array(256);
+            let arrayItemNum = 0;
+            while (readTsb != "------") {
+                readItem = JSON.parse(sessionStorage.getItem(readTsb));
+                let letterNum = 4;
+                while (readItem[letterNum] != "--") {
+                    dataArray[arrayItemNum++] = readItem[letterNum];
+                    if (letterNum == 63) {
+                        break;
+                    }
+                    letterNum++;
+                }
+                readTsb = readItem[1].toString() + readItem[2].toString() + readItem[3].toString();
+            }
+            return dataArray;
         }
         copy(oldFilename, newFilename) {
             let fileExists = this.findTsb(newFilename);

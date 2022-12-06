@@ -53,7 +53,7 @@ module TSOS {
 
                 waitAndTurnaroundTimeTable[this.pid.toString()] = [0,0];
             } else {
-                this.storeInDisc(loadDataArray);
+                this.storeInDisc(loadDataArray, this.pid);
             }
             return "Process " + (this.pid++).toString() + " created.";
         }
@@ -83,16 +83,66 @@ module TSOS {
             this.memoryMap = { 0: -1, 1: -1, 2: -1 };
         }
 
-        public storeInDisc(loadDataArray: string[]) {
+        /**
+         * Stores a program in the disk
+         * @param loadDataArray the array of program data to be stored
+         */
+        public storeInDisc(loadDataArray: string[], pid: number) {
+
             let dataArray = new Array(256).fill("00");
 
             for(let dataItemNum = 0; dataItemNum < loadDataArray.length; dataItemNum++) {
                 dataArray[dataItemNum] = loadDataArray[dataItemNum];
             }
 
-            _krnDiskDriver.create("~" + this.pid);
+            _krnDiskDriver.create("~" + pid);
 
-            _krnDiskDriver.writeDirect("~" + this.pid, dataArray);
+            _krnDiskDriver.writeDirect("~" + pid, dataArray);
+
+            residentList.push(new PCB(
+                pid, 0x000, 0x100, "Resident", 0x000, "Disk"));
+
+            waitAndTurnaroundTimeTable[pid.toString()] = [0,0];
+        }
+
+        /**
+         * Does Swapping (Most Recently Used)
+         * @param inPid the pid of the incoming process
+         * @param outPid the pid of the outgoing process
+         */
+        public swap(inPid: number, outPid: number) {
+            // Finds the location of the process to be swapped
+            let swapMemoryLoc = parseInt(Object.keys(this.memoryMap).find(key => this.memoryMap[key] === outPid));
+
+            // Puts the process to be swapped out into memory
+            let outDataArray = new Array(256);
+            for(let address = 0x100 * swapMemoryLoc; address < (0x100 * swapMemoryLoc) + 0x100; address++) {
+                outDataArray[address - (0x100 * swapMemoryLoc)] =
+                    _MemoryAccessor.getDataImmediate(address).toString(16).padStart(2, "0");
+            }
+            this.storeInDisc(outDataArray, outPid);
+
+            // Brings the process to be swapped in into memory
+            let inDataArray = _krnDiskDriver.readDirect("~" + inPid);
+            _krnDiskDriver.delete("~" + inPid);
+            console.log(JSON.stringify(outDataArray));
+            console.log(JSON.stringify(inDataArray));
+
+            // Rewrites the memory block with all zeros
+            for (let arrayElemNum = 0; arrayElemNum < 0x100; arrayElemNum++) {
+                _MemoryAccessor.writeImmediate(swapMemoryLoc * 0x100 + arrayElemNum, 0x00);
+            }
+
+            // Writes the input data in memory
+            for (let arrayElemNum = 0; arrayElemNum < inDataArray.length; arrayElemNum++) {
+                _MemoryAccessor.writeImmediate(swapMemoryLoc * 0x100 + arrayElemNum, parseInt(inDataArray[arrayElemNum], 16));
+            }
+
+            this.memoryMap[swapMemoryLoc] = inPid;
+
+            readyQueue[0].baseRegister = swapMemoryLoc * 0x100;
+            readyQueue[0].limitRegister = (swapMemoryLoc * 0x100) + 0x100;
+            readyQueue[0].pc = (readyQueue[0].pc % 0x100) + readyQueue[0].baseRegister;
         }
     }
 }

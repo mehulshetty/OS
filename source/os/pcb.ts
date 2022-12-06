@@ -11,6 +11,7 @@ module TSOS {
                     public limitRegister: number,
                     public state: string,
                     public pc: number = 0x000,
+                    public location: string = "Memory",
                     public ir: number = 0x00,
                     public acc: number = 0x00,
                     public xReg: number = 0x00,
@@ -18,7 +19,7 @@ module TSOS {
                     public zFlag: number = 0x0,
                     public step: number = 0x0,
                     public brkFlag: number = 0x0,
-                    private carryFlag: number = 0x0,
+                    private carryFlag: number = 0x0
         ) {
         }
 

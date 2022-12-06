@@ -6,12 +6,13 @@
 var TSOS;
 (function (TSOS) {
     class PCB {
-        constructor(pid, baseRegister, limitRegister, state, pc = 0x000, ir = 0x00, acc = 0x00, xReg = 0x00, yReg = 0x00, zFlag = 0x0, step = 0x0, brkFlag = 0x0, carryFlag = 0x0) {
+        constructor(pid, baseRegister, limitRegister, state, pc = 0x000, location = "Memory", ir = 0x00, acc = 0x00, xReg = 0x00, yReg = 0x00, zFlag = 0x0, step = 0x0, brkFlag = 0x0, carryFlag = 0x0) {
             this.pid = pid;
             this.baseRegister = baseRegister;
             this.limitRegister = limitRegister;
             this.state = state;
             this.pc = pc;
+            this.location = location;
             this.ir = ir;
             this.acc = acc;
             this.xReg = xReg;

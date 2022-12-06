@@ -18,6 +18,13 @@ module TSOS {
                 readyQueue[0].saveContext(_CPU);
                 readyQueue[0].state = "Ready";
                 readyQueue.push(readyQueue.shift());
+
+                if(readyQueue[0].location == "Disk") {
+                    _MemoryManager.swap(readyQueue[0].pid, readyQueue[readyQueue.length - 1].pid);
+                    readyQueue[0].location = "Memory";
+                    readyQueue[readyQueue.length - 1].location = "Disk";
+                }
+
                 readyQueue[0].getContext(_CPU);
                 readyQueue[0].state = "Running";
                 _MemoryManager.executingPid = readyQueue[0].pid;

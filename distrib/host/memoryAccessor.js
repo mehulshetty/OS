@@ -52,6 +52,9 @@ var TSOS;
             this.memory.setMAR(this.getAddress());
             return this.memory.read();
         }
+        getDataImmediate(address) {
+            return this.memory.readImmediate(address);
+        }
         /**
          * Sets the high order bytes (if it exists) for the address member
          * @param hob the value of the high order bytes
