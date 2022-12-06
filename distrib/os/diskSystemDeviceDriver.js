@@ -130,11 +130,19 @@ var TSOS;
         write(currentFilename, data) {
             let writeTsb = this.findTsb(currentFilename);
             if (writeTsb != "") {
+                let currentData = JSON.parse(sessionStorage.getItem(writeTsb));
+                // Deletes all data in the file if any data exists
+                let deleteTsb = currentData[1].toString() + currentData[2].toString() + currentData[3].toString();
+                let deleteItem = JSON.parse(sessionStorage.getItem(deleteTsb));
+                while (deleteTsb != "------") {
+                    deleteItem[0] = "0";
+                    sessionStorage.setItem(deleteTsb, JSON.stringify(deleteItem));
+                    deleteTsb = deleteItem[1].toString() + deleteItem[2].toString() + deleteItem[3].toString();
+                    deleteItem = JSON.parse(sessionStorage.getItem(deleteTsb));
+                }
                 // Gets rid of the quotes
                 data = data.slice(1, -1);
                 let memoryBlocks = Math.floor(data.length / 60) + 1;
-                console.log(data.length + " " + memoryBlocks);
-                let currentData = JSON.parse(sessionStorage.getItem(writeTsb));
                 let currentTsb = currentData[1].toString() + currentData[2].toString() + currentData[3].toString();
                 for (let block = 0x0; block < memoryBlocks; block++) {
                     let newDataArray = new Array(64).fill("--");
@@ -164,8 +172,54 @@ var TSOS;
                             newDataArray[3].toString();
                     }
                 }
+                return "Data written.";
             }
-            return "Data written.";
+        }
+        writeDirect(currentFilename, data) {
+            let writeTsb = this.findTsb(currentFilename);
+            if (writeTsb != "") {
+                let currentData = JSON.parse(sessionStorage.getItem(writeTsb));
+                // Deletes all data in the file if any data exists
+                let deleteTsb = currentData[1].toString() + currentData[2].toString() + currentData[3].toString();
+                let deleteItem = JSON.parse(sessionStorage.getItem(deleteTsb));
+                while (deleteTsb != "------") {
+                    deleteItem[0] = "0";
+                    sessionStorage.setItem(deleteTsb, JSON.stringify(deleteItem));
+                    deleteTsb = deleteItem[1].toString() + deleteItem[2].toString() + deleteItem[3].toString();
+                    deleteItem = JSON.parse(sessionStorage.getItem(deleteTsb));
+                }
+                let memoryBlocks = Math.floor(data.length / 60) + 1;
+                let currentTsb = currentData[1].toString() + currentData[2].toString() + currentData[3].toString();
+                for (let block = 0x0; block < memoryBlocks; block++) {
+                    let newDataArray = new Array(64).fill("--");
+                    newDataArray[0] = "1";
+                    let maxChars = 60;
+                    if (block == (memoryBlocks - 1)) {
+                        maxChars = data.length % 60;
+                    }
+                    for (let charNum = 0; charNum < maxChars; charNum++) {
+                        let characterValue = data[(block * 60) + charNum];
+                        newDataArray[4 + charNum] = characterValue;
+                    }
+                    // Finds the next block to store data in
+                    if (block < (memoryBlocks - 1)) {
+                        let unusedLocation = this.findUnusedStorageLocation();
+                        let claimLocation = new Array(64).fill("--");
+                        claimLocation[0] = "1";
+                        sessionStorage.setItem(unusedLocation, JSON.stringify(claimLocation));
+                        newDataArray[1] = unusedLocation[0];
+                        newDataArray[2] = unusedLocation[1];
+                        newDataArray[3] = unusedLocation[2];
+                    }
+                    sessionStorage.setItem(currentTsb, JSON.stringify(newDataArray));
+                    if (block < (memoryBlocks - 1)) {
+                        currentTsb = newDataArray[1].toString() +
+                            newDataArray[2].toString() +
+                            newDataArray[3].toString();
+                    }
+                }
+                return "Data written.";
+            }
         }
         delete(filename) {
             let deleteTsb = this.findTsb(filename);
@@ -218,6 +272,24 @@ var TSOS;
                 readTsb = readItem[1].toString() + readItem[2].toString() + readItem[3].toString();
             }
             return dataString;
+        }
+        copy(oldFilename, newFilename) {
+            let fileExists = this.findTsb(newFilename);
+            if (fileExists != "") {
+                fileExists = this.findTsb(oldFilename);
+                if (fileExists != "") {
+                    let data = this.read(oldFilename);
+                    this.create(newFilename);
+                    this.write(newFilename, data);
+                    return "File copy created.";
+                }
+                else {
+                    return "File doesn't exist.";
+                }
+            }
+            else {
+                return "Filename already exists.";
+            }
         }
     }
     TSOS.DiskSystemDeviceDriver = DiskSystemDeviceDriver;

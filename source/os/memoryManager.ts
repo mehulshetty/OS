@@ -52,11 +52,10 @@ module TSOS {
                     this.pid, storeLoc * 0x100, (storeLoc * 0x100) + 0x100, "Resident", storeLoc * 0x100));
 
                 waitAndTurnaroundTimeTable[this.pid.toString()] = [0,0];
-
-                return "Process " + (this.pid++).toString() + " created.";
             } else {
-                return "All memory locations are full. Clear memory before loading another program."
+                this.storeInDisc(loadDataArray);
             }
+            return "Process " + (this.pid++).toString() + " created.";
         }
 
         /**
@@ -82,6 +81,18 @@ module TSOS {
 
         public clearMem () {
             this.memoryMap = { 0: -1, 1: -1, 2: -1 };
+        }
+
+        public storeInDisc(loadDataArray: string[]) {
+            let dataArray = new Array(256).fill("00");
+
+            for(let dataItemNum = 0; dataItemNum < loadDataArray.length; dataItemNum++) {
+                dataArray[dataItemNum] = loadDataArray[dataItemNum];
+            }
+
+            _krnDiskDriver.create("~" + this.pid);
+
+            _krnDiskDriver.writeDirect("~" + this.pid, dataArray);
         }
     }
 }

@@ -706,7 +706,12 @@ module TSOS {
         public shellCreate(args: string[]) {
             if (args.length > 0) {
                 if(args[0].length < 60) {
-                    _krnDiskDriver.create(args[0]);
+                    if(!args[0].includes("~")) {
+                        _krnDiskDriver.create(args[0]);
+                    }
+                    else {
+                        _StdOut.putText("Filename cannot have a tilde (~).");
+                    }
                 }
                 else {
                     _StdOut.putText("Filename cannot exceed 59 characters.");
@@ -725,30 +730,60 @@ module TSOS {
 
         public shellWrite(args: string[]) {
             if (args.length > 0) {
-                let filename = args[0];
+                if(!args[0].includes("~")) {
+                    let filename = args[0];
 
-                let data = args.slice(1).join(" ");
+                    let data = args.slice(1).join(" ");
 
-                _krnDiskDriver.write(filename, data);
+                    _krnDiskDriver.write(filename, data);
+                }
+                else {
+                    _StdOut.putText("Filename cannot have a tilde (~).");
+                }
             }
         }
 
         public shellDelete(args: string[]) {
             if (args.length > 0) {
-                let filename = args[0];
+                if(!args[0].includes("~")) {
+                    let filename = args[0];
 
-                _krnDiskDriver.delete(filename);
+                    _krnDiskDriver.delete(filename);
+                }
+                else {
+                    _StdOut.putText("Filename cannot have a tilde (~).");
+                }
             }
         }
 
-        public shellCopy() {
-
+        public shellCopy(args: string[]) {
+            if (args.length >= 2) {
+                if(!args[0].includes("~") && !args[1].includes("~")) {
+                    if(args[0] != args[1]) {
+                        _krnDiskDriver.copy(args[0], args[1]);
+                    }
+                    else {
+                        _StdOut.putText("Filename already exists.");
+                    }
+                }
+                else {
+                    _StdOut.putText("Filename cannot have a tilde (~).");
+                }
+            }
         }
 
         public shellRename(args: string[]) {
             if (args.length > 1) {
-                console.log(args);
-                _krnDiskDriver.rename(args[0], args[1]);
+                if(!args[0].includes("~") && !args[1].includes("~")) {
+                    console.log(args);
+                    _krnDiskDriver.rename(args[0], args[1]);
+                }
+                else {
+                    _StdOut.putText("Filename cannot have a tilde (~).");
+                }
+            }
+            else {
+                _StdOut.putText("Has two parameters.");
             }
         }
 
