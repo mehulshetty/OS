@@ -98,12 +98,16 @@ var TSOS;
                 outDataArray[address - (0x100 * swapMemoryLoc)] =
                     _MemoryAccessor.getDataImmediate(address).toString(16).padStart(2, "0");
             }
-            this.storeInDisc(outDataArray, outPid);
+            // Puts the outgoing process on the disk
+            let dataArray = new Array(256).fill("00");
+            for (let dataItemNum = 0; dataItemNum < outDataArray.length; dataItemNum++) {
+                dataArray[dataItemNum] = outDataArray[dataItemNum];
+            }
+            _krnDiskDriver.create("~" + outPid);
+            _krnDiskDriver.writeDirect("~" + outPid, dataArray);
             // Brings the process to be swapped in into memory
             let inDataArray = _krnDiskDriver.readDirect("~" + inPid);
             _krnDiskDriver.delete("~" + inPid);
-            console.log(JSON.stringify(outDataArray));
-            console.log(JSON.stringify(inDataArray));
             // Rewrites the memory block with all zeros
             for (let arrayElemNum = 0; arrayElemNum < 0x100; arrayElemNum++) {
                 _MemoryAccessor.writeImmediate(swapMemoryLoc * 0x100 + arrayElemNum, 0x00);
@@ -116,6 +120,45 @@ var TSOS;
             readyQueue[0].baseRegister = swapMemoryLoc * 0x100;
             readyQueue[0].limitRegister = (swapMemoryLoc * 0x100) + 0x100;
             readyQueue[0].pc = (readyQueue[0].pc % 0x100) + readyQueue[0].baseRegister;
+        }
+        terminateProcess(terminatePid) {
+            terminatedList.push(terminatePid);
+            let terminatedProcessLocation = Object.keys(_MemoryManager.memoryMap)
+                .find(key => _MemoryManager.memoryMap[key] == terminatePid);
+            _MemoryManager.memoryMap[terminatedProcessLocation] = -1;
+            if (readyQueue.length != 0) {
+                readyQueue[0].getContext(_CPU);
+            }
+            else {
+                _CPU.isExecuting = false;
+                _MemoryManager.executingPid = -1;
+            }
+            let queueOrder = -1;
+            for (let processNum = 0x0; processNum < readyQueue.length; processNum++) {
+                if (readyQueue[processNum].location == "Disk") {
+                    queueOrder = processNum;
+                    break;
+                }
+            }
+            if (queueOrder > -1) {
+                let inPid = readyQueue[queueOrder].pid;
+                // Brings the process to be swapped in into memory
+                let inDataArray = _krnDiskDriver.readDirect("~" + inPid);
+                _krnDiskDriver.delete("~" + inPid);
+                // Rewrites the memory block with all zeros
+                for (let arrayElemNum = 0; arrayElemNum < 0x100; arrayElemNum++) {
+                    _MemoryAccessor.writeImmediate(parseInt(terminatedProcessLocation) * 0x100 + arrayElemNum, 0x00);
+                }
+                // Writes the input data in memory
+                for (let arrayElemNum = 0; arrayElemNum < inDataArray.length; arrayElemNum++) {
+                    _MemoryAccessor.writeImmediate(parseInt(terminatedProcessLocation) * 0x100 + arrayElemNum, parseInt(inDataArray[arrayElemNum], 16));
+                }
+                this.memoryMap[parseInt(terminatedProcessLocation)] = inPid;
+                readyQueue[queueOrder].baseRegister = parseInt(terminatedProcessLocation) * 0x100;
+                readyQueue[queueOrder].limitRegister = (parseInt(terminatedProcessLocation) * 0x100) + 0x100;
+                readyQueue[queueOrder].pc = (readyQueue[queueOrder].pc % 0x100) + readyQueue[queueOrder].baseRegister;
+                readyQueue[queueOrder].location = "Memory";
+            }
         }
     }
     TSOS.MemoryManager = MemoryManager;

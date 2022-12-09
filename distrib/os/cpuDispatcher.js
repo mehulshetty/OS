@@ -40,17 +40,7 @@ var TSOS;
                 _StdOut.putText("> ");
                 // Pushes the PID of the terminated process into the terminatedList so that we know it was terminated
                 // when "ps" is called in the shell
-                terminatedList.push(terminatedProcess.pid);
-                let terminatedProcessLocation = Object.keys(_MemoryManager.memoryMap)
-                    .find(key => _MemoryManager.memoryMap[key] == terminatedProcess.pid);
-                _MemoryManager.memoryMap[terminatedProcessLocation] = -1;
-                if (readyQueue.length != 0) {
-                    readyQueue[0].getContext(_CPU);
-                }
-                else {
-                    _CPU.isExecuting = false;
-                    _MemoryManager.executingPid = -1;
-                }
+                _MemoryManager.terminateProcess(terminatedProcess.pid);
             }
         }
         /**

@@ -211,6 +211,18 @@ module TSOS {
                 "- Displays all the files currently stored on the disk.");
             this.commandList[this.commandList.length] = sc;
 
+            // getSchedule
+            sc = new ShellCommand(this.shellGetSchedule,
+                "getschedule",
+                "- Displays the CPU scheduling type";
+            this.commandList[this.commandList.length] = sc;
+
+            // setSchedule
+            sc = new ShellCommand(this.shellSetSchedule,
+                "setschedule",
+                "- <scheduleType> Sets the CPU scheduling type";
+            this.commandList[this.commandList.length] = sc;
+
             // Display the initial prompt.
             this.putPrompt();
         }
@@ -627,7 +639,7 @@ module TSOS {
         }
 
         public shellRunAll() {
-
+            console.log(residentList);
             while(residentList.length != 0) {
                 _MemoryManager.run(residentList[0].pid);
             }
@@ -801,6 +813,28 @@ module TSOS {
             }
             else {
                 _StdOut.putText("No files to display. Storage is empty.");
+            }
+        }
+
+        public shellGetSchedule() {
+            if(_CPUScheduler.quantum != Number.MAX_VALUE) {
+                _StdOut.putText("CPU Schedule: Round Robin");
+            }
+            else {
+                _StdOut.putText("CPU Schedule: First-Come First-Serve");
+            }
+        }
+
+        public shellSetSchedule(args: string[]) {
+            if (args.length > 0) {
+                switch(args[0].toLowerCase()) {
+                    case "fcfs":
+                        _CPUScheduler.quantum = Number.MAX_VALUE;
+                        break;
+                    case "rr":
+                        _CPUScheduler.quantum = 6;
+                        break;
+                }
             }
         }
     }
