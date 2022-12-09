@@ -84,6 +84,7 @@ var TSOS;
                 this.updateCpuViewRow();
                 this.updateMemoryViewBody();
                 this.updateProcessViewBody();
+                this.updateDiskViewBody();
             }, 100);
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
@@ -125,7 +126,7 @@ var TSOS;
                 + "<td>" + _CPU.yReg.toString(16).padStart(2, '0') + "</td>"
                 + "<td>" + _CPU.zFlag.toString(16) + "</td>";
             document.getElementById("cpuViewRow").innerHTML = updatedHtmlText;
-            console.log("PID: ", _MemoryManager.executingPid, " | PC: ", _CPU.PC.toString(16).padStart(3, '0'), " | IR: ", _CPU.IR.toString(16).padStart(2, '0'), " | ACC: ", _CPU.acc.toString(16).padStart(2, '0'), " | X: ", _CPU.xReg.toString(16).padStart(2, '0'), " | Y: ", _CPU.yReg.toString(16).padStart(2, '0'), " | Z: ", _CPU.zFlag);
+            console.log("PID: ", _MemoryManager.executingPid.toString(), " | PC: ", _CPU.PC.toString(16).padStart(3, '0'), " | IR: ", _CPU.IR.toString(16).padStart(2, '0'), " | ACC: ", _CPU.acc.toString(16).padStart(2, '0'), " | X: ", _CPU.xReg.toString(16).padStart(2, '0'), " | Y: ", _CPU.yReg.toString(16).padStart(2, '0'), " | Z: ", _CPU.zFlag);
         }
         static updateMemoryViewBody() {
             let updatedHtmlText = "";
@@ -139,20 +140,55 @@ var TSOS;
             }
             document.getElementById("memoryViewBody").innerHTML = updatedHtmlText;
         }
+        static updateDiskViewBody() {
+            let updatedHtmlText = "";
+            for (let track = 0x0; track < 0x04; track++) {
+                for (let sector = 0x0; sector < 0x08; sector++) {
+                    for (let block = 0x0; block < 0x08; block++) {
+                        updatedHtmlText += "<tr><td>" + track + ":" + sector + ":" + block + "</td>";
+                        let tsb = track.toString() + sector.toString() + block.toString();
+                        let tsbDataArray = JSON.parse(sessionStorage.getItem(tsb));
+                        updatedHtmlText += "<td>" + tsbDataArray[0] +
+                            "</td><td>" + tsbDataArray[1] +
+                            "</td><td>" + tsbDataArray[2] +
+                            "</td><td>" + tsbDataArray[3] +
+                            "</td><td>" + tsbDataArray.slice(4).join(' ') + "</td></tr>";
+                    }
+                }
+            }
+            document.getElementById("diskViewBody").innerHTML = updatedHtmlText;
+        }
         static updateProcessViewBody() {
             let updatedHtmlText = "";
             if (_CPU.isExecuting) {
                 for (let blockRow = 0x0; blockRow < readyQueue.length; blockRow++) {
                     let block = readyQueue[blockRow];
-                    updatedHtmlText += "<tr><th>" + block.pid + "</th>";
-                    updatedHtmlText += "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.IR.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.acc.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.xReg.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.yReg.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + _CPU.zFlag.toString(16).padStart(3, '0') + "</td>";
-                    updatedHtmlText += "<td>" + block.state + "</td>";
-                    updatedHtmlText += "</tr>";
+                    if (block.pid == _MemoryManager.executingPid) {
+                        updatedHtmlText += "<tr><td>" + block.pid.toString(16) + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.PC.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.IR.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.acc.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.xReg.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.yReg.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + _CPU.zFlag.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.baseRegister.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.state + "</td>";
+                        updatedHtmlText += "<td>Memory</td>";
+                        updatedHtmlText += "</tr>";
+                    }
+                    else {
+                        updatedHtmlText += "<tr><td>" + block.pid.toString(16) + "</td>";
+                        updatedHtmlText += "<td>" + block.pc.toString(16).padStart(3, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.ir.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.acc.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.xReg.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.yReg.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.zFlag.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.baseRegister.toString(16).padStart(2, '0') + "</td>";
+                        updatedHtmlText += "<td>" + block.state + "</td>";
+                        updatedHtmlText += "<td>" + block.location + "</td>";
+                        updatedHtmlText += "</tr>";
+                    }
                 }
             }
             document.getElementById("processViewBody").innerHTML = updatedHtmlText;

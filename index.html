@@ -37,11 +37,12 @@
    <script type="text/javascript" src="distrib/os/pcb.js"></script>
    <script type="text/javascript" src="distrib/os/cpuScheduler.js"></script>
    <script type="text/javascript" src="distrib/os/cpuDispatcher.js"></script>
+   <script type="text/javascript" src="distrib/os/diskSystemDeviceDriver.js"></script>
 
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment the line below to enable GLaDOS testing. -->
-   <!-- <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip3.js"></script> -->
+   <script type="text/javascript" src="http://alanclasses.github.io/TSOS/test/glados-ip4.js"></script>
 
 </head>
 
@@ -109,6 +110,8 @@
              readonly>
    </nav>
 
+   <br>
+
    <div>
       <div id="divConsole" style="margin:4px; width: 900px; height:650px; float:left;">
          <canvas id="display"
@@ -171,7 +174,9 @@
                   <th scope="col">X</th>
                   <th scope="col">Y</th>
                   <th scope="col">Z</th>
-                  <th scope=""col>Status</th>
+                  <th scope="col">Base</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Location</th>
                </tr>
                </thead>
                <tbody id="processViewBody">
@@ -185,9 +190,9 @@
                <textarea name="taProgramInput"
                          id  ="taProgramInput"
                          rows="10"
-                         cols="100"
+                         cols="140"
                          class="bg-dark text-white"
-               >A9 03 8D 41 00 A9 01 8D 40 00 AC 40 00 A2 01 FF EE 40 00 AE 40 00 EC 41 00 D0 EF A9 44 8D 42 00 A9 4F 8D 43 00 A9 4E 8D 44 00 A9 45 8D 45 00 A9 00 8D 46 00 A2 02 A0 42 FF 00</textarea>
+               >A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 03 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 61 00 61 64 6F 6E 65 00</textarea>
             </label>
          </div>
          <div id="divLog">
@@ -197,7 +202,7 @@
                <textarea name="taHostLog"
                          id  ="taHostLog"
                          rows="10"
-                         cols="100"
+                         cols="140"
                          class="bg-dark text-white"
                          readonly
                ></textarea>
@@ -216,7 +221,29 @@
           style = "height: 30px;"
           readonly>
 </div>
-
+<br>
+<br>
+<div style="overflow-y:scroll; max-height:400px;">
+   <table class="table table-dark">
+      <thead class="thead-dark">
+      <tr>
+         <th>Disk View</th>
+      </tr>
+      <tr>
+         <th>Track:Sector:Block</th>
+         <th>In Use</th>
+         <th>Next Track</th>
+         <th>Next Sector</th>
+         <th>Next Block</th>
+         <th>Data</th>
+      </tr>
+      </thead>
+      <tbody id="diskViewBody">
+      </tbody>
+   </table>
+</div>
+<br>
+<br>
 <p class="footerText" style="clear:both; color: white; font-family: 'Comic Sans MS'">
    <br>
    Copyright &copy; 2022 - 2022 All Rights Reserved. This is the intellectual property of May-Whool.

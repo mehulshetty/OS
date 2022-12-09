@@ -29,14 +29,21 @@ module TSOS {
 
         public krnKbdDispatchKeyPress(params) {
             // Parse the params.  TODO: Check that the params are valid and osTrapError if not.
-            console.log(params);
+            // console.log(params);
             var keyCode = params[0];
             var isShifted = params[1];
 
             _Kernel.krnTrace("Key code:" + keyCode + " shifted:" + isShifted);
 
             if(isCtrl && keyCode == 67) {
-                _CPU.clearAll();
+                let currentProcess = _MemoryManager.executingPid;
+                for(let processNum = 0; processNum < readyQueue.length; processNum++) {
+                    if(readyQueue[processNum].pid == currentProcess) {
+                        readyQueue[processNum].state = "Terminated";
+                        _CPUScheduler.currentQuantum = _CPUScheduler.quantum;
+                        break;
+                    }
+                }
             }
             else {
                 var chr = "";

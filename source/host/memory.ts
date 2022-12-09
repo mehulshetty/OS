@@ -69,6 +69,13 @@ module TSOS {
         }
 
         /**
+         * Returns the data that is stored in the memory at the location given in the address
+         */
+        readImmediate(address: number): number {
+            return this.storage[address];
+        }
+
+        /**
          * Sets the value of the location in the storage member at the address specified
          * in the MAR to the value specified in the MDR
          */

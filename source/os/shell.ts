@@ -136,7 +136,7 @@ module TSOS {
             // quantum
             sc = new ShellCommand(this.shellQuantum,
                 "quantum",
-                "- <int> Sets the quantum for round-robin.");
+                "- <int> - Sets the quantum for round-robin.");
             this.commandList[this.commandList.length] = sc;
 
             // clearmem
@@ -159,8 +159,68 @@ module TSOS {
 
             // killall
             sc = new ShellCommand(this.shellKillAll,
-                "quantum",
+                "killall",
                 "- Kills all processes.");
+            this.commandList[this.commandList.length] = sc;
+
+            // format
+            sc = new ShellCommand(this.shellFormat,
+                "format",
+                "- Formats the disk drive.");
+            this.commandList[this.commandList.length] = sc;
+
+            // create
+            sc = new ShellCommand(this.shellCreate,
+                "create",
+                "- <filename> - Creates a file with the specified name.");
+            this.commandList[this.commandList.length] = sc;
+
+            // read
+            sc = new ShellCommand(this.shellRead,
+                "read",
+                "- <filename> - Reads and displays the contents of the file.");
+            this.commandList[this.commandList.length] = sc;
+
+            // write
+            sc = new ShellCommand(this.shellWrite,
+                "write",
+                "- <filename> \"data\" - Writes the data inside the quotes to the file with given name.");
+            this.commandList[this.commandList.length] = sc;
+
+            // delete
+            sc = new ShellCommand(this.shellDelete,
+                "delete",
+                "- <filename> - Removes filename from storage.");
+            this.commandList[this.commandList.length] = sc;
+
+            // copy
+            sc = new ShellCommand(this.shellCopy,
+                "copy",
+                "- <existing filename> <new filename> - Copies the existing file into the new one.");
+            this.commandList[this.commandList.length] = sc;
+
+            // rename
+            sc = new ShellCommand(this.shellRename,
+                "rename",
+                "- <current filename> <new filename> - Rename the current file to the new name.");
+            this.commandList[this.commandList.length] = sc;
+
+            // ls
+            sc = new ShellCommand(this.shellList,
+                "ls",
+                "- Displays all the files currently stored on the disk.");
+            this.commandList[this.commandList.length] = sc;
+
+            // getSchedule
+            sc = new ShellCommand(this.shellGetSchedule,
+                "getschedule",
+                "- Displays the CPU scheduling type");
+            this.commandList[this.commandList.length] = sc;
+
+            // setSchedule
+            sc = new ShellCommand(this.shellSetSchedule,
+                "setschedule",
+                "- <scheduleType> Sets the CPU scheduling type");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
@@ -579,6 +639,7 @@ module TSOS {
         }
 
         public shellRunAll() {
+            console.log(residentList);
             while(residentList.length != 0) {
                 _MemoryManager.run(residentList[0].pid);
             }
@@ -586,26 +647,195 @@ module TSOS {
 
         public shellQuantum(args: string[]) {
             if (args.length > 0) {
-                let newQuantum = parseInt(args[0]);
-                _CPUScheduler.quantum = newQuantum;
+                _CPUScheduler.quantum = parseInt(args[0]);
             }
         }
 
         public shellClearMem() {
             _Memory.reset();
+            _MemoryManager.clearMem();
         }
 
         public shellKill(args: string[]) {
-
+            if (args.length > 0) {
+                for(let processNum = 0; processNum < readyQueue.length; processNum++) {
+                    if(readyQueue[processNum].pid == parseInt(args[0])) {
+                        readyQueue[processNum].state = "Terminated";
+                        _CPUScheduler.currentQuantum = _CPUScheduler.quantum;
+                        break;
+                    }
+                }
+            }
         }
 
         public shellKillAll() {
+
+            let newQueue = readyQueue;
             readyQueue = [];
+
+            for(let processNum = 0; processNum < newQueue.length; processNum++) {
+                terminatedList.push(newQueue[processNum].pid);
+            }
+
+            _CPU.clearAll();
         }
 
         public shellPS() {
+            let processList = {};
+            for(let processNum = 0; processNum < residentList.length; processNum++) {
+                let currentPid = residentList[processNum].pid;
+                processList[currentPid.toString()] = "Resident";
+            }
+
+            for(let processNum = 0; processNum < readyQueue.length; processNum++) {
+                let currentPid = readyQueue[processNum].pid;
+                processList[currentPid.toString()] = readyQueue[processNum].state;
+            }
+
+            for(let processNum = 0; processNum < terminatedList.length; processNum++) {
+                let currentPid = terminatedList[processNum];
+                processList[currentPid.toString()] = "Terminated";
+            }
+
+            _StdOut.putText("  PID               State");
+            _StdOut.advanceLine();
+            let sortedKeys = Object.keys(processList).sort();
+
+            for(let keyNum = 0; keyNum < sortedKeys.length; keyNum++) {
+                let pid = sortedKeys[keyNum];
+                let outputText = pid.padStart(5, " ") + processList[pid].padStart(20, " ");
+                _StdOut.putText(outputText);
+                _StdOut.advanceLine();
+            }
 
         }
 
+        public shellFormat() {
+            _krnDiskDriver.format();
+            _StdOut.putText("Disk Formatted.");
+        }
+
+        public shellCreate(args: string[]) {
+            if (args.length > 0) {
+                if(args[0].length < 60) {
+                    if(!args[0].includes("~")) {
+                        _krnDiskDriver.create(args[0]);
+                    }
+                    else {
+                        _StdOut.putText("Filename cannot have a tilde (~).");
+                    }
+                }
+                else {
+                    _StdOut.putText("Filename cannot exceed 59 characters.");
+                }
+            }
+        }
+
+        public shellRead(args: string[]) {
+            if (args.length > 0) {
+                let filename = args[0];
+
+                let data = _krnDiskDriver.read(filename);
+                _StdOut.putText(data);
+            }
+        }
+
+        public shellWrite(args: string[]) {
+            if (args.length > 0) {
+                if(!args[0].includes("~")) {
+                    let filename = args[0];
+
+                    let data = args.slice(1).join(" ");
+
+                    _krnDiskDriver.write(filename, data);
+                }
+                else {
+                    _StdOut.putText("Filename cannot have a tilde (~).");
+                }
+            }
+        }
+
+        public shellDelete(args: string[]) {
+            if (args.length > 0) {
+                if(!args[0].includes("~")) {
+                    let filename = args[0];
+
+                    _krnDiskDriver.delete(filename);
+                }
+                else {
+                    _StdOut.putText("Filename cannot have a tilde (~).");
+                }
+            }
+        }
+
+        public shellCopy(args: string[]) {
+            if (args.length >= 2) {
+                if(!args[0].includes("~") && !args[1].includes("~")) {
+                    if(args[0] != args[1]) {
+                        _krnDiskDriver.copy(args[0], args[1]);
+                    }
+                    else {
+                        _StdOut.putText("Filename already exists.");
+                    }
+                }
+                else {
+                    _StdOut.putText("Filename cannot have a tilde (~).");
+                }
+            }
+        }
+
+        public shellRename(args: string[]) {
+            if (args.length > 1) {
+                if(!args[0].includes("~") && !args[1].includes("~")) {
+                    console.log(args);
+                    _krnDiskDriver.rename(args[0], args[1]);
+                }
+                else {
+                    _StdOut.putText("Filename cannot have a tilde (~).");
+                }
+            }
+            else {
+                _StdOut.putText("Has two parameters.");
+            }
+        }
+
+        public shellList() {
+            let allFiles = _krnDiskDriver.list();
+
+            if(allFiles.length != 0) {
+
+                _StdOut.putText("All Files:");
+
+                for(let filename of allFiles) {
+                    _StdOut.advanceLine();
+                    _StdOut.putText(filename);
+                }
+            }
+            else {
+                _StdOut.putText("No files to display. Storage is empty.");
+            }
+        }
+
+        public shellGetSchedule() {
+            if(_CPUScheduler.quantum != Number.MAX_VALUE) {
+                _StdOut.putText("CPU Schedule: Round Robin");
+            }
+            else {
+                _StdOut.putText("CPU Schedule: First-Come First-Serve");
+            }
+        }
+
+        public shellSetSchedule(args: string[]) {
+            if (args.length > 0) {
+                switch(args[0].toLowerCase()) {
+                    case "fcfs":
+                        _CPUScheduler.quantum = Number.MAX_VALUE;
+                        break;
+                    case "rr":
+                        _CPUScheduler.quantum = 6;
+                        break;
+                }
+            }
+        }
     }
 }

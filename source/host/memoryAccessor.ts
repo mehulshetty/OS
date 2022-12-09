@@ -59,6 +59,10 @@ module TSOS {
             return this.memory.read();
         }
 
+        getDataImmediate(address: number) {
+            return this.memory.readImmediate(address);
+        }
+
         /**
          * Sets the high order bytes (if it exists) for the address member
          * @param hob the value of the high order bytes
