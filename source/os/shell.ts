@@ -214,13 +214,13 @@ module TSOS {
             // getSchedule
             sc = new ShellCommand(this.shellGetSchedule,
                 "getschedule",
-                "- Displays the CPU scheduling type";
+                "- Displays the CPU scheduling type");
             this.commandList[this.commandList.length] = sc;
 
             // setSchedule
             sc = new ShellCommand(this.shellSetSchedule,
                 "setschedule",
-                "- <scheduleType> Sets the CPU scheduling type";
+                "- <scheduleType> Sets the CPU scheduling type");
             this.commandList[this.commandList.length] = sc;
 
             // Display the initial prompt.
