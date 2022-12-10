@@ -510,7 +510,7 @@ module TSOS {
             function runAnimation() {
                 _DrawingContext.drawImage(catImage, catPosition, _StdOut.currentYPosition - 80, 90, 35);
                 catPosition += 5;
-                if(catPosition < 900) {
+                if(catPosition < 800) {
                     requestAnimationFrame(runAnimation);
                 }
             }

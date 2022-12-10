@@ -122,9 +122,9 @@ var TSOS;
             this.currentYPosition += incrementYPosition;
             // Handles Scrolling
             if (this.currentYPosition >= 650) {
-                let oldCanvas = _DrawingContext.getImageData(0, this.currentYPosition, 900, -(650 - incrementYPosition));
+                let oldCanvas = _DrawingContext.getImageData(0, this.currentYPosition, 800, -(650 - incrementYPosition));
                 this.currentYPosition = 650 - incrementYPosition;
-                _DrawingContext.clearRect(0, 650, 900, -(incrementYPosition + 3));
+                _DrawingContext.clearRect(0, 650, 800, -(incrementYPosition + 3));
                 _DrawingContext.putImageData(oldCanvas, 0, 0);
             }
         }

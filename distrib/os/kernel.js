@@ -157,7 +157,7 @@ var TSOS;
             TSOS.Control.hostLog("OS ERROR - TRAP: " + msg);
             // Displays the Blue Screen of Death
             _DrawingContext.fillStyle = "#0000FF";
-            _DrawingContext.fillRect(0, 0, 900, 650);
+            _DrawingContext.fillRect(0, 0, 800, 650);
             _DrawingContext.fillStyle = "#FFFFFF";
             _DrawingContext.fillRect(200, 305, 550, -30);
             _StdOut.currentXPosition = 250;
