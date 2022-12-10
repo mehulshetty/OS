@@ -121,8 +121,13 @@ var TSOS;
             readyQueue[0].limitRegister = (swapMemoryLoc * 0x100) + 0x100;
             readyQueue[0].pc = (readyQueue[0].pc % 0x100) + readyQueue[0].baseRegister;
         }
+        /**
+         * Terminates the process
+         * @param terminatePid the pid for the process to be terminated
+         */
         terminateProcess(terminatePid) {
             terminatedList.push(terminatePid);
+            // Finds the location for the terminated process in the memoryMap
             let terminatedProcessLocation = Object.keys(_MemoryManager.memoryMap)
                 .find(key => _MemoryManager.memoryMap[key] == terminatePid);
             _MemoryManager.memoryMap[terminatedProcessLocation] = -1;
@@ -133,6 +138,8 @@ var TSOS;
                 _CPU.isExecuting = false;
                 _MemoryManager.executingPid = -1;
             }
+            // Checks if there is a process on disk, and fetches the first of such processes to fill
+            // in the new memory vacancy
             let queueOrder = -1;
             for (let processNum = 0x0; processNum < readyQueue.length; processNum++) {
                 if (readyQueue[processNum].location == "Disk") {

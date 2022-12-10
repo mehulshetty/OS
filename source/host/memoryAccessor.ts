@@ -59,6 +59,7 @@ module TSOS {
             return this.memory.read();
         }
 
+        // Gets the data from Memory from the address specified
         getDataImmediate(address: number) {
             return this.memory.readImmediate(address);
         }

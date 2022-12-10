@@ -52,6 +52,7 @@ var TSOS;
             this.memory.setMAR(this.getAddress());
             return this.memory.read();
         }
+        // Gets the data from Memory from the address specified
         getDataImmediate(address) {
             return this.memory.readImmediate(address);
         }

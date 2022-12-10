@@ -17,6 +17,7 @@ var TSOS;
                 readyQueue[0].saveContext(_CPU);
                 readyQueue[0].state = "Ready";
                 readyQueue.push(readyQueue.shift());
+                // If process is in disk, brings it to memory
                 if (readyQueue[0].location == "Disk") {
                     _MemoryManager.swap(readyQueue[0].pid, readyQueue[readyQueue.length - 1].pid);
                     readyQueue[0].location = "Memory";
