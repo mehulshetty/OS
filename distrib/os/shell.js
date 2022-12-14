@@ -115,7 +115,7 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellRename, "rename", "- <current filename> <new filename> - Rename the current file to the new name.");
             this.commandList[this.commandList.length] = sc;
             // ls
-            sc = new TSOS.ShellCommand(this.shellList, "ls", "- Displays all the files currently stored on the disk.");
+            sc = new TSOS.ShellCommand(this.shellList, "ls", "(optional) -a - Displays all the files currently stored on the disk.");
             this.commandList[this.commandList.length] = sc;
             // getSchedule
             sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", "- Displays the CPU scheduling type");
@@ -579,7 +579,8 @@ var TSOS;
                 if (!args[0].includes("~")) {
                     let filename = args[0];
                     let data = args.slice(1).join(" ");
-                    _krnDiskDriver.write(filename, data);
+                    let writeOutput = _krnDiskDriver.write(filename, data);
+                    _StdOut.putText(writeOutput);
                 }
                 else {
                     _StdOut.putText("Filename cannot have a tilde (~).");
@@ -616,7 +617,8 @@ var TSOS;
             if (args.length > 1) {
                 if (!args[0].includes("~") && !args[1].includes("~")) {
                     console.log(args);
-                    _krnDiskDriver.rename(args[0], args[1]);
+                    let renameOutput = _krnDiskDriver.rename(args[0], args[1]);
+                    _StdOut.putText(renameOutput);
                 }
                 else {
                     _StdOut.putText("Filename cannot have a tilde (~).");
@@ -626,8 +628,12 @@ var TSOS;
                 _StdOut.putText("Has two parameters.");
             }
         }
-        shellList() {
-            let allFiles = _krnDiskDriver.list();
+        shellList(args) {
+            let all = false;
+            if (args[0] == "-a") {
+                all = true;
+            }
+            let allFiles = _krnDiskDriver.list(all);
             if (allFiles.length != 0) {
                 _StdOut.putText("All Files:");
                 for (let filename of allFiles) {

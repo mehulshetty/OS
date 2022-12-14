@@ -133,6 +133,11 @@ module TSOS {
 
         public rename(currentFilename: string, newFilename: string): string {
             let renameTsb = this.findTsb(currentFilename);
+
+            if(this.findTsb(newFilename) != "") {
+                return "Filename already exists.";
+            }
+
             let renameTsbArray = JSON.parse(sessionStorage.getItem(renameTsb));
 
             if(renameTsb != "") {
@@ -154,6 +159,9 @@ module TSOS {
                 sessionStorage.setItem(renameTsb, JSON.stringify(newArray));
 
                 return "File renamed."
+            }
+            else {
+                return "File Not Found";
             }
         }
 
@@ -219,6 +227,9 @@ module TSOS {
                 }
                 return "Data written."
             }
+            else {
+                return "File not found."
+            }
         }
 
         public writeDirect(currentFilename: string, data: string[]): string {
@@ -272,6 +283,10 @@ module TSOS {
         public delete(filename: string): string {
             let deleteTsb = this.findTsb(filename);
 
+            if(deleteTsb == "") {
+                return "File not found.";
+            }
+
             let deleteItem = JSON.parse(sessionStorage.getItem(deleteTsb));
             let nextTsb = deleteTsb;
 
@@ -287,7 +302,7 @@ module TSOS {
             return "File deleted."
         }
 
-        public list(): string[] {
+        public list(all: boolean): string[] {
             let allFiles = [];
 
             for(let track = 0x0; track < 0x1; track++) {
@@ -304,7 +319,14 @@ module TSOS {
                                 letterNum++;
                             }
 
-                            allFiles.push(filename);
+                            if(all) {
+                                allFiles.push(filename);
+                            }
+                            else {
+                                if(filename[0] != "~") {
+                                    allFiles.push(filename);
+                                }
+                            }
                         }
                     }
                 }
@@ -316,6 +338,11 @@ module TSOS {
 
         public read(filename: string): string {
             let readTsb = this.findTsb(filename);
+
+            // If file doesn't exist
+            if(readTsb == "") {
+                return "File Not Found";
+            }
 
             let readItem = JSON.parse(sessionStorage.getItem(readTsb));
             readTsb = readItem[1].toString() + readItem[2].toString() + readItem[3].toString();

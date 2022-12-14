@@ -208,7 +208,7 @@ module TSOS {
             // ls
             sc = new ShellCommand(this.shellList,
                 "ls",
-                "- Displays all the files currently stored on the disk.");
+                "(optional) -a - Displays all the files currently stored on the disk.");
             this.commandList[this.commandList.length] = sc;
 
             // getSchedule
@@ -747,7 +747,8 @@ module TSOS {
 
                     let data = args.slice(1).join(" ");
 
-                    _krnDiskDriver.write(filename, data);
+                    let writeOutput = _krnDiskDriver.write(filename, data);
+                    _StdOut.putText(writeOutput);
                 }
                 else {
                     _StdOut.putText("Filename cannot have a tilde (~).");
@@ -788,7 +789,8 @@ module TSOS {
             if (args.length > 1) {
                 if(!args[0].includes("~") && !args[1].includes("~")) {
                     console.log(args);
-                    _krnDiskDriver.rename(args[0], args[1]);
+                    let renameOutput = _krnDiskDriver.rename(args[0], args[1]);
+                    _StdOut.putText(renameOutput);
                 }
                 else {
                     _StdOut.putText("Filename cannot have a tilde (~).");
@@ -799,8 +801,14 @@ module TSOS {
             }
         }
 
-        public shellList() {
-            let allFiles = _krnDiskDriver.list();
+        public shellList(args: string[]) {
+            let all = false;
+
+            if(args[0] == "-a") {
+                all = true;
+            }
+
+            let allFiles = _krnDiskDriver.list(all);
 
             if(allFiles.length != 0) {
 

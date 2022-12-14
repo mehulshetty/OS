@@ -109,6 +109,9 @@ var TSOS;
         }
         rename(currentFilename, newFilename) {
             let renameTsb = this.findTsb(currentFilename);
+            if (this.findTsb(newFilename) != "") {
+                return "Filename already exists.";
+            }
             let renameTsbArray = JSON.parse(sessionStorage.getItem(renameTsb));
             if (renameTsb != "") {
                 let newArray = new Array(64).fill("--");
@@ -125,6 +128,9 @@ var TSOS;
                 }
                 sessionStorage.setItem(renameTsb, JSON.stringify(newArray));
                 return "File renamed.";
+            }
+            else {
+                return "File Not Found";
             }
         }
         write(currentFilename, data) {
@@ -174,6 +180,9 @@ var TSOS;
                 }
                 return "Data written.";
             }
+            else {
+                return "File not found.";
+            }
         }
         writeDirect(currentFilename, data) {
             let writeTsb = this.findTsb(currentFilename);
@@ -214,6 +223,9 @@ var TSOS;
         }
         delete(filename) {
             let deleteTsb = this.findTsb(filename);
+            if (deleteTsb == "") {
+                return "File not found.";
+            }
             let deleteItem = JSON.parse(sessionStorage.getItem(deleteTsb));
             let nextTsb = deleteTsb;
             while (nextTsb != "------") {
@@ -224,7 +236,7 @@ var TSOS;
             }
             return "File deleted.";
         }
-        list() {
+        list(all) {
             let allFiles = [];
             for (let track = 0x0; track < 0x1; track++) {
                 for (let sector = 0x0; sector < 0x8; sector++) {
@@ -238,7 +250,14 @@ var TSOS;
                                 filename += String.fromCharCode(parseInt(currentData[letterNum], 16));
                                 letterNum++;
                             }
-                            allFiles.push(filename);
+                            if (all) {
+                                allFiles.push(filename);
+                            }
+                            else {
+                                if (filename[0] != "~") {
+                                    allFiles.push(filename);
+                                }
+                            }
                         }
                     }
                 }
@@ -247,6 +266,10 @@ var TSOS;
         }
         read(filename) {
             let readTsb = this.findTsb(filename);
+            // If file doesn't exist
+            if (readTsb == "") {
+                return "File Not Found";
+            }
             let readItem = JSON.parse(sessionStorage.getItem(readTsb));
             readTsb = readItem[1].toString() + readItem[2].toString() + readItem[3].toString();
             let dataString = "";
