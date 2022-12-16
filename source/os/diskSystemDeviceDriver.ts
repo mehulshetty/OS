@@ -64,7 +64,6 @@ module TSOS {
         }
 
         public create(filename: string): string {
-
             let track = 0x0;
             for(let sector = 0x0; sector < 0x8; sector++) {
                 for(let block = 0x0; block < 0x8; block++) {
@@ -79,7 +78,7 @@ module TSOS {
                             let nextLocation = this.findUnusedStorageLocation();
 
                             if(nextLocation != "") {
-                                let nextLocationArray = JSON.parse(sessionStorage.getItem(tsb));
+                                let nextLocationArray = new Array(64).fill("--");;
                                 nextLocationArray[0] = "1";
                                 sessionStorage.setItem(nextLocation, JSON.stringify(nextLocationArray));
 

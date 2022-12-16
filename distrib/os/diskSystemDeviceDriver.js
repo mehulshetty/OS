@@ -64,7 +64,8 @@ var TSOS;
                             newArray[0x0] = "1";
                             let nextLocation = this.findUnusedStorageLocation();
                             if (nextLocation != "") {
-                                let nextLocationArray = JSON.parse(sessionStorage.getItem(tsb));
+                                let nextLocationArray = new Array(64).fill("--");
+                                ;
                                 nextLocationArray[0] = "1";
                                 sessionStorage.setItem(nextLocation, JSON.stringify(nextLocationArray));
                                 newArray[0x1] = nextLocation[0x0];

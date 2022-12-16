@@ -556,7 +556,8 @@ var TSOS;
             if (args.length > 0) {
                 if (args[0].length < 60) {
                     if (!args[0].includes("~")) {
-                        _krnDiskDriver.create(args[0]);
+                        let createText = _krnDiskDriver.create(args[0]);
+                        _StdOut.putText(createText);
                     }
                     else {
                         _StdOut.putText("Filename cannot have a tilde (~).");
