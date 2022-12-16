@@ -5,7 +5,15 @@
    <meta name="author"             content="Alan G. Labouseur" />
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-   <script src="https://kit.fontawesome.com/b05fe92938.js" crossorigin="anonymous"></script>
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+           integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+           integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+           integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   <link href="/fontawesome-free-6.2.1-web/css/fontawesome.css" rel="stylesheet">
+   <link href="/fontawesome-free-6.2.1-web/css/brands.css" rel="stylesheet">
+   <link href="/fontawesome-free-6.2.1-web/css/solid.css" rel="stylesheet">
    <link rel="stylesheet" href="tsos.css" type="text/css" media="screen" />
    <title>
       zerOS
@@ -125,90 +133,143 @@
       </div>
       <div style="padding-left: 10px; height: 650px; overflow-y: scroll;" >
          <br>
-         <div>
-            <table class="table table-dark">
-               <thead class="thead-dark">
-               <tr>
-                  <th scope="col">PC</th>
-                  <th scope="col">IR</th>
-                  <th scope="col">ACC</th>
-                  <th scope="col">XReg</th>
-                  <th scope="col">YReg</th>
-                  <th scope="col">ZFlag</th>
-               </tr>
-               </thead>
-               <tbody>
-               <tr id="cpuViewRow">
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
-               </tr>
-               </tbody>
-            </table>
+         <div id="accordion0">
+            <div class="card">
+               <div class="card-header" id="headingOne">
+                  <h5 class="mb-0">
+                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        CPU
+                     </button>
+                  </h5>
+               </div>
+
+               <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion0">
+                  <table class="table table-dark">
+                     <thead class="thead-dark">
+                     <tr>
+                        <th scope="col">PC</th>
+                        <th scope="col">IR</th>
+                        <th scope="col">ACC</th>
+                        <th scope="col">XReg</th>
+                        <th scope="col">YReg</th>
+                        <th scope="col">ZFlag</th>
+                     </tr>
+                     </thead>
+                     <tbody>
+                     <tr id="cpuViewRow">
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                     </tr>
+                     </tbody>
+                  </table>
+               </div>
+            </div>
          </div>
          <br>
-         <div style="overflow-y:scroll; max-height:200px;">
-            <table class="table table-dark">
-               <thead class="thead-dark">
-               <tr>
-                  <th>Memory View</th>
-               </tr>
-               </thead>
-               <tbody id="memoryViewBody">
-               </tbody>
-            </table>
+         <div id="accordion1">
+            <div class="card">
+               <div class="card-header" id="headingTwo">
+                  <h5 class="mb-0">
+                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        Memory
+                     </button>
+                  </h5>
+               </div>
+               <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion1">
+                  <div style="overflow-y:scroll; max-height:200px;">
+                     <table class="table table-dark">
+                        <tbody id="memoryViewBody">
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </div>
          </div>
          <br>
-         <div style="overflow-y:scroll; max-height:200px;">
-            <table class="table table-dark rounded-10">
-               <thead class="thead-dark">
-               <tr>
-                  <th>Processes</th>
-               </tr>
-               <tr>
-                  <th scope="col">PID</th>
-                  <th scope="col">PC</th>
-                  <th scope="col">IR</th>
-                  <th scope="col">ACC</th>
-                  <th scope="col">X</th>
-                  <th scope="col">Y</th>
-                  <th scope="col">Z</th>
-                  <th scope="col">Base</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">Location</th>
-               </tr>
-               </thead>
-               <tbody id="processViewBody">
-               </tbody>
-            </table>
+         <div id="accordion2">
+            <div class="card">
+               <div class="card-header" id="headingThree">
+                  <h5 class="mb-0">
+                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                        Processes
+                     </button>
+                  </h5>
+               </div>
+               <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordion2">
+                  <div style="overflow-y:scroll; max-height:200px;">
+                     <table class="table table-dark rounded-10">
+                        <tr>
+                           <th scope="col">PID</th>
+                           <th scope="col">PC</th>
+                           <th scope="col">IR</th>
+                           <th scope="col">ACC</th>
+                           <th scope="col">X</th>
+                           <th scope="col">Y</th>
+                           <th scope="col">Z</th>
+                           <th scope="col">Base</th>
+                           <th scope="col">Status</th>
+                           <th scope="col">Location</th>
+                        </tr>
+                        </thead>
+                        <tbody id="processViewBody">
+                        </tbody>
+                     </table>
+                  </div>
+               </div>
+            </div>
          </div>
-         <div id="divUserProgramInput">
-            <label>
-               User Program Input
-               <br>
-               <textarea name="taProgramInput"
-                         id  ="taProgramInput"
-                         rows="10"
-                         cols="118"
-                         class="bg-dark text-white"
-               >A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 03 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 61 00 61 64 6F 6E 65 00</textarea>
-            </label>
+         <br>
+         <div id="accordion3">
+            <div class="card">
+               <div class="card-header" id="headingFour">
+                  <h5 class="mb-0">
+                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+                        User Program Input
+                     </button>
+                  </h5>
+               </div>
+               <div id="collapseFour" class="collapse show" aria-labelledby="headingFour" data-parent="#accordion3">
+                  <div id="divUserProgramInput">
+                     <label>
+                        <textarea name="taProgramInput"
+                                  id  ="taProgramInput"
+                                  rows="10"
+                                  cols="118"
+                                  class="bg-dark text-white"
+                        >A9 00 8D 7B 00 A9 00 8D 7B 00 A9 00 8D 7C 00 A9 00 8D 7C 00 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 39 A0 7D A2 02 FF AC 7B 00 A2 01 FF AD 7B 00 8D 7A 00 A9 01 6D 7A 00 8D 7B 00 A9 03 AE 7B 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 01 EC 7A 00 D0 05 A9 01 8D 7C 00 A9 00 AE 7C 00 8D 7A 00 A9 00 EC 7A 00 D0 02 A9 01 8D 7A 00 A2 00 EC 7A 00 D0 AC A0 7F A2 02 FF 00 00 00 00 61 00 61 64 6F 6E 65 00</textarea>
+                     </label>
+                  </div>
+               </div>
+            </div>
          </div>
-         <div id="divLog">
-            <label>
-               Host Log
-               <br>
-               <textarea name="taHostLog"
-                         id  ="taHostLog"
-                         rows="10"
-                         cols="118"
-                         class="bg-dark text-white"
-                         readonly
-               ></textarea>
-            </label>
+         <br>
+         <div id="accordion4">
+            <div class="card">
+               <div class="card-header" id="headingFiver">
+                  <h5 class="mb-0">
+                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFive" aria-expanded="true" aria-controls="collapseFive">
+                        Host Log
+                     </button>
+                  </h5>
+               </div>
+               <div id="collapseFive" class="collapse show" aria-labelledby="headingFive" data-parent="#accordion4">
+                  <div id="divLog">
+                     <label>
+                        <textarea name="taHostLog"
+                                  id  ="taHostLog"
+                                  rows="10"
+                                  cols="118"
+                                  class="bg-dark text-white"
+                                  readonly
+                        ></textarea>
+                     </label>
+                  </div>
+               </div>
+            </div>
          </div>
       </div>
    </div>
